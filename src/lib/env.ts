@@ -52,7 +52,7 @@ const serverEnvSchema = z.object({
   DATABASE_POOL_MAX: z.string().optional(),
 
   // Email
-  FROM_EMAIL: z.string().email().optional(),
+  FROM_EMAIL: z.string().optional().default("noreply@dxm369.com"),
 
   // Observability
   SENTRY_DSN: z.string().url().optional(),
