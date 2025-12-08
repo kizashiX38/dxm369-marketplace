@@ -96,9 +96,9 @@ const clientEnvSchema = z.object({
 const rawServerEnv = {
   NODE_ENV: process.env.NODE_ENV,
 
-  AMAZON_ACCESS_KEY_ID: process.env.AMAZON_ACCESS_KEY_ID,
-  AMAZON_SECRET_ACCESS_KEY: process.env.AMAZON_SECRET_ACCESS_KEY,
-  AMAZON_ASSOCIATE_TAG: process.env.AMAZON_ASSOCIATE_TAG,
+  AMAZON_ACCESS_KEY_ID: process.env.AMAZON_ACCESS_KEY_ID?.trim(),
+  AMAZON_SECRET_ACCESS_KEY: process.env.AMAZON_SECRET_ACCESS_KEY?.trim(),
+  AMAZON_ASSOCIATE_TAG: process.env.AMAZON_ASSOCIATE_TAG?.trim(),
 
   AMAZON_REGION: process.env.AMAZON_REGION,
   AMAZON_HOST: process.env.AMAZON_HOST,
@@ -107,13 +107,14 @@ const rawServerEnv = {
   ASIN_SCRAPER_ENABLED: process.env.ASIN_SCRAPER_ENABLED,
 
   // DATABASE_URL: Support both direct DATABASE_URL and Vercel-provided DATABASE_POSTGRES_PRISMA_URL
-  DATABASE_URL: process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_PRISMA_URL || process.env.DATABASE_POSTGRES_URL,
+  // Strip trailing newlines that Vercel CLI sometimes adds
+  DATABASE_URL: (process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_PRISMA_URL || process.env.DATABASE_POSTGRES_URL)?.trim(),
 
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
 
-  APP_SECRET: process.env.APP_SECRET,
-  JWT_SECRET: process.env.JWT_SECRET,
-  RATE_LIMIT_SECRET: process.env.RATE_LIMIT_SECRET,
+  APP_SECRET: process.env.APP_SECRET?.trim(),
+  JWT_SECRET: process.env.JWT_SECRET?.trim(),
+  RATE_LIMIT_SECRET: process.env.RATE_LIMIT_SECRET?.trim(),
 
   ADMIN_SECRET: process.env.ADMIN_SECRET,
   CRON_SECRET: process.env.CRON_SECRET,
