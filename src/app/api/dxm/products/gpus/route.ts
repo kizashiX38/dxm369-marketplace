@@ -8,7 +8,7 @@ import type { DealRadarItem } from "@/lib/dealRadarTypes";
 export const dynamic = 'force-dynamic';
 
 export const GET = apiSafe(async (request: NextRequest) => {
-  // Query products from marketplace_products table
+  // Query products from product_catalog table (same as CPU route)
   const raw = await queryAll<{
     id: number;
     asin: string;
@@ -16,35 +16,30 @@ export const GET = apiSafe(async (request: NextRequest) => {
     brand: string;
     category: string;
     image_url?: string;
-    price?: number;
-    rating?: number;
-    review_count?: number;
-    affiliate_url?: string;
+    current_price?: number;
+    list_price?: number;
+    prime_eligible?: boolean;
+    dxm_value_score?: number;
   }>(
-    `SELECT * FROM marketplace_products WHERE category = $1 AND visible = true ORDER BY price DESC LIMIT 50`,
-    ["gpu"]
+    `SELECT * FROM product_catalog WHERE category = $1`,
+    ["GPU"]
   );
 
   // Map database rows to DealRadarItem format
-  const dealRadarItems: DealRadarItem[] = raw.map(row => {
-    const price = typeof row.price === 'number' ? row.price : (row.price ? parseFloat(String(row.price)) : 0);
-
-    return {
-      id: `amazon-${row.asin}`,
-      asin: row.asin,
-      title: row.title,
-      brand: row.brand || "Unknown",
-      category: "gpu" as any,
-      price: price,
-      previousPrice: undefined,
-      dxmScore: 7.5, // Default score - can be calculated later
-      imageUrl: row.image_url,
-      availability: price > 0 ? "In Stock" : "Out of Stock",
-      primeEligible: true,
-      vendor: "Amazon",
-      affiliateUrl: row.affiliate_url || `https://www.amazon.com/dp/${row.asin}?tag=dxm369-20`
-    };
-  });
+  const dealRadarItems: DealRadarItem[] = raw.map(row => ({
+    id: `amazon-${row.asin}`,
+    asin: row.asin,
+    title: row.title,
+    brand: row.brand,
+    category: row.category.toLowerCase() as any,
+    price: row.current_price || 0,
+    previousPrice: row.list_price,
+    dxmScore: row.dxm_value_score || 0,
+    imageUrl: row.image_url,
+    availability: row.current_price ? "In Stock" : "Out of Stock",
+    primeEligible: row.prime_eligible || false,
+    vendor: "Amazon"
+  }));
 
   // Normalize and filter
   const normalized = dealRadarItems
