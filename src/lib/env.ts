@@ -106,7 +106,8 @@ const rawServerEnv = {
   ASIN_SCRAPER_URL: process.env.ASIN_SCRAPER_URL,
   ASIN_SCRAPER_ENABLED: process.env.ASIN_SCRAPER_ENABLED,
 
-  DATABASE_URL: process.env.DATABASE_URL,
+  // DATABASE_URL: Support both direct DATABASE_URL and Vercel-provided DATABASE_POSTGRES_PRISMA_URL
+  DATABASE_URL: process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_PRISMA_URL || process.env.DATABASE_POSTGRES_URL,
 
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
 
