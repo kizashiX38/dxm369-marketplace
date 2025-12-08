@@ -107,13 +107,24 @@ const rawServerEnv = {
   ASIN_SCRAPER_ENABLED: process.env.ASIN_SCRAPER_ENABLED,
 
   // DATABASE_URL: Support both direct DATABASE_URL and Vercel-provided DATABASE_POSTGRES_*_URL variants
-  // Use NON_POOLING if available, since pooler URLs have pgbouncer parameter incompatible with node-pg
+  // For serverless (Vercel): prioritize PRISMA_URL (pooler with pgbouncer) for better connection handling
+  // For local/direct connections: use NON_POOLING
   // Strip trailing newlines that Vercel CLI sometimes adds
-  // Also remove the pgbouncer parameter if present
   DATABASE_URL: (() => {
+    const isServerless = process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_VERSION;
+
+    // Serverless (Vercel): use pooler URL for better concurrency handling
+    if (isServerless) {
+      const url = (process.env.DATABASE_POSTGRES_PRISMA_URL || process.env.DATABASE_POSTGRES_URL || process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_URL_NON_POOLING)?.trim();
+      if (!url) return undefined;
+      // Keep pgbouncer parameter for pooler URLs - it's needed for connection pooling
+      return url;
+    }
+
+    // Local/direct: use non-pooling URL if available, fall back to others
     const url = (process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_URL_NON_POOLING || process.env.DATABASE_POSTGRES_URL || process.env.DATABASE_POSTGRES_PRISMA_URL)?.trim();
     if (!url) return undefined;
-    // Remove pgbouncer parameter which causes issues with node-pg
+    // Remove pgbouncer parameter from direct connections (not needed and can cause issues)
     return url.replace('&pgbouncer=true', '').replace('?pgbouncer=true', '');
   })(),
 

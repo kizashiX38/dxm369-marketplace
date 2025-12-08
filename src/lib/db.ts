@@ -10,7 +10,7 @@ import { log } from "./log";
 // Database configuration from environment using centralized access
 const getDatabaseConfig = (): PoolConfig => {
   const connectionString = env.DATABASE_URL;
-  
+
   if (!connectionString) {
     log.warn('[DXM369 DB] DATABASE_URL not set - database features disabled');
     return {
@@ -18,15 +18,22 @@ const getDatabaseConfig = (): PoolConfig => {
       max: 0,
     };
   }
-  
+
   // Detect local Postgres (localhost/127.0.0.1) - disable SSL for local dev
   const isLocal = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
 
+  // Detect if using Supabase connection pooler (port 6543, pgbouncer)
+  const isPooler = connectionString.includes(':6543') || connectionString.includes('pgbouncer');
+
+  // Pool settings optimized for serverless vs local
+  const poolMin = isLocal ? 1 : 2;
+  const poolMax = isLocal ? 5 : (isPooler ? 3 : 10); // Pooler = fewer local connections needed
+
   const config: PoolConfig = {
     connectionString,
-    max: parseInt(env.DATABASE_POOL_MAX || '10', 10),
-    min: parseInt(env.DATABASE_POOL_MIN || '2', 10),
-    idleTimeoutMillis: 30000,
+    max: parseInt(env.DATABASE_POOL_MAX || String(poolMax), 10),
+    min: parseInt(env.DATABASE_POOL_MIN || String(poolMin), 10),
+    idleTimeoutMillis: isPooler ? 10000 : 30000, // Pooler has shorter timeouts
     connectionTimeoutMillis: 5000,
   };
 
