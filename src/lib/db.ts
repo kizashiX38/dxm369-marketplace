@@ -37,6 +37,9 @@ const getDatabaseConfig = (): PoolConfig => {
     config.ssl = {
       rejectUnauthorized: false,
     };
+
+    // Also set Node.js environment variable as fallback
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   }
 
   return config;
