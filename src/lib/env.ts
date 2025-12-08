@@ -1,7 +1,9 @@
+'use server';
+
 // src/lib/env.ts
 // DXM369 Environment Hardening - Enterprise-Grade Configuration
 // Single source of truth for all environment variables
-// DO NOT import this in client components
+// SERVER-ONLY MODULE - Do not import in client components
 
 import { z } from "zod";
 
