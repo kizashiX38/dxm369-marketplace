@@ -22,19 +22,24 @@ const getDatabaseConfig = (): PoolConfig => {
   // Detect local Postgres (localhost/127.0.0.1) - disable SSL for local dev
   const isLocal = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
 
-  return {
+  const config: PoolConfig = {
     connectionString,
     max: parseInt(env.DATABASE_POOL_MAX || '10', 10),
     min: parseInt(env.DATABASE_POOL_MIN || '2', 10),
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
-    // SSL configuration: disable for local, enable for production cloud DBs
-    // For Supabase: explicitly allow self-signed certificates
-    ssl: isLocal ? false : {
-      rejectUnauthorized: false,
-      sslmode: 'require',
-    } as any,
   };
+
+  // SSL configuration: disable for local, enable for production cloud DBs
+  // For Supabase: explicitly allow self-signed certificates
+  if (!isLocal) {
+    // Use TLS/SSL without certificate verification for Supabase
+    config.ssl = {
+      rejectUnauthorized: false,
+    };
+  }
+
+  return config;
 };
 
 // Singleton pool instance
@@ -68,13 +73,13 @@ export function getPool(): Pool {
       });
     });
 
-    // Log connection info in development
-    if (env.NODE_ENV !== 'production') {
-      log.info('[DXM369 DB] Pool initialized with SSL:', {
-        hasSSL: !!config.ssl,
-        isLocal: config.connectionString?.includes('localhost'),
-      });
-    }
+    // Log connection info
+    log.info('[DXM369 DB] Pool initialized:', {
+      hasSSL: !!config.ssl,
+      isLocal: config.connectionString?.includes('localhost'),
+      sslRejectUnauthorized: (config.ssl as any)?.rejectUnauthorized,
+      env: env.NODE_ENV,
+    });
   }
   
   return pool;
