@@ -106,9 +106,10 @@ const rawServerEnv = {
   ASIN_SCRAPER_URL: process.env.ASIN_SCRAPER_URL,
   ASIN_SCRAPER_ENABLED: process.env.ASIN_SCRAPER_ENABLED,
 
-  // DATABASE_URL: Support both direct DATABASE_URL and Vercel-provided DATABASE_POSTGRES_PRISMA_URL
+  // DATABASE_URL: Support both direct DATABASE_URL and Vercel-provided DATABASE_POSTGRES_*_URL variants
+  // Use NON_POOLING if available, since pooler URLs have pgbouncer parameter incompatible with node-pg
   // Strip trailing newlines that Vercel CLI sometimes adds
-  DATABASE_URL: (process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_PRISMA_URL || process.env.DATABASE_POSTGRES_URL)?.trim(),
+  DATABASE_URL: (process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_URL_NON_POOLING || process.env.DATABASE_POSTGRES_URL || process.env.DATABASE_POSTGRES_PRISMA_URL)?.trim(),
 
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
 
