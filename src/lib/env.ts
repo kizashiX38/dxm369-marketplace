@@ -109,7 +109,13 @@ const rawServerEnv = {
   // DATABASE_URL: Support both direct DATABASE_URL and Vercel-provided DATABASE_POSTGRES_*_URL variants
   // Use NON_POOLING if available, since pooler URLs have pgbouncer parameter incompatible with node-pg
   // Strip trailing newlines that Vercel CLI sometimes adds
-  DATABASE_URL: (process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_URL_NON_POOLING || process.env.DATABASE_POSTGRES_URL || process.env.DATABASE_POSTGRES_PRISMA_URL)?.trim(),
+  // Also remove the pgbouncer parameter if present
+  DATABASE_URL: (() => {
+    const url = (process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_URL_NON_POOLING || process.env.DATABASE_POSTGRES_URL || process.env.DATABASE_POSTGRES_PRISMA_URL)?.trim();
+    if (!url) return undefined;
+    // Remove pgbouncer parameter which causes issues with node-pg
+    return url.replace('&pgbouncer=true', '').replace('?pgbouncer=true', '');
+  })(),
 
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
 
