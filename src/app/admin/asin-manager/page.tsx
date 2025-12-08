@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { appConfig } from '@/lib/env';
+import { appConfig } from '@/lib/env-client';
 import AdminAuth from '../components/AdminAuth';
 
 interface ASINProduct {
