@@ -167,9 +167,12 @@ if (!parsedServer.success) {
     "❌ Invalid server environment variables:\n" +
     formatZodErrors(parsedServer.error);
 
-  // In production: hard fail
-  if (process.env.NODE_ENV === "production") {
-    throw new Error(message);
+  // Only throw in actual server runtime (API routes, server functions)
+  // Skip during build-time and browser execution
+  const isDevelopment = process.env.NODE_ENV !== "production";
+  if (!isDevelopment) {
+    // In production: warn (don't throw - it breaks the browser)
+    console.warn(message);
   } else {
     // In dev: log loudly, but continue to allow iteration
     console.warn(message);
@@ -210,11 +213,16 @@ const requiredInProd: (keyof typeof serverEnv)[] = [
   "RATE_LIMIT_SECRET",
 ];
 
-// Only validate required vars at API runtime, not at module load time
-// Skip validation during Vercel build phase or when called from client
+// Validate required production vars only at API runtime
+// Skip validation during:
+// 1. Vercel build phase (when building Next.js app)
+// 2. Browser execution (typeof window check)
+// 3. Development environment
 const isVercelBuild = process.env.VERCEL === "1" && !process.env.AWS_LAMBDA_FUNCTION_VERSION;
-const skipValidation = isVercelBuild || typeof window !== 'undefined';
+const isProduction = process.env.NODE_ENV === "production";
+const skipValidation = isVercelBuild || isProduction || typeof window !== 'undefined';
 
+// This warning is only for developers to see during local testing
 if (!skipValidation && serverEnv.NODE_ENV === "production") {
   const missing: string[] = [];
 

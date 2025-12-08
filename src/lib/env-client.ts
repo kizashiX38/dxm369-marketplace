@@ -8,14 +8,17 @@
  * Client-safe public configuration
  * These values are safe to expose to the browser
  * Only uses NEXT_PUBLIC_* environment variables
+ * 
+ * NOTE: NEXT_PUBLIC_* variables are replaced at build time by Next.js
+ * and are safe to access directly without typeof window checks.
  */
 export const publicConfig = {
-  associateTag: (typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG : '') || 'dxm369-20',
-  trackingBaseTag: (typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_TRACKING_BASE_TAG : '') || 'dxm369',
-  siteUrl: (typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_SITE_URL : '') || 'http://localhost:3000',
-  baseUrl: (typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_BASE_URL : '') || (typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_SITE_URL : '') || 'http://localhost:3000',
-  environment: (typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_ENV : '') || 'development',
-  adminKey: (typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_ADMIN_KEY : '') || '',
+  associateTag: process.env.NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG || 'dxm369-20',
+  trackingBaseTag: process.env.NEXT_PUBLIC_TRACKING_BASE_TAG || 'dxm369',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+  environment: process.env.NEXT_PUBLIC_ENV || 'development',
+  adminKey: process.env.NEXT_PUBLIC_ADMIN_KEY || '',
 } as const;
 
 /**
