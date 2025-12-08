@@ -3,47 +3,8 @@
 // Generates intelligent, DXM-style product analysis and recommendations
 
 import { DealRadarItem } from "./dealRadar";
-
-export interface AIProductSummary {
-  id: string;
-  asin: string;
-  title: string;
-  category: string;
-  
-  // Core AI Analysis
-  intelligentSummary: string;
-  dxmAnalysis: string;
-  performanceInsights: string;
-  valueProposition: string;
-  
-  // Comparative Analysis
-  competitorComparison?: string;
-  marketPosition: 'budget' | 'mid-range' | 'premium' | 'flagship';
-  
-  // User Recommendations
-  bestFor: string[];
-  notRecommendedFor: string[];
-  alternativeProducts?: string[];
-  
-  // Technical Insights
-  keyStrengths: string[];
-  potentialWeaknesses: string[];
-  futureProofing: 'excellent' | 'good' | 'fair' | 'limited';
-  
-  // DXM Scoring Breakdown
-  scoreBreakdown: {
-    performanceValue: { score: number; reasoning: string };
-    dealQuality: { score: number; reasoning: string };
-    trustSignal: { score: number; reasoning: string };
-    efficiency: { score: number; reasoning: string };
-    trendSignal: { score: number; reasoning: string };
-  };
-  
-  // Metadata
-  confidence: number; // 0-100% AI confidence in analysis
-  lastUpdated: string;
-  analysisVersion: string;
-}
+import type { AIProductSummary } from "@/lib/types/ai";
+export type { AIProductSummary } from "@/lib/types/ai";
 
 // AI Summary Templates by Category
 const GPU_ANALYSIS_TEMPLATES = {

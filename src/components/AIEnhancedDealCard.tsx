@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { buildAmazonProductUrl } from "@/lib/affiliate";
 import { DXMProduct, getAvailabilityDisplay } from "@/lib/types/product";
-import { AIProductSummary } from "@/lib/aiSummaries";
+import { AIProductSummary } from "@/lib/types/ai";
 import { trackAffiliateClick } from "@/lib/tracking";
 import { DXMProductImage } from "@/components/DXMProductImage";
 
