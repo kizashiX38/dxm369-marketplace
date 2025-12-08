@@ -60,7 +60,21 @@
       "Bash(DATABASE_URL=\"postgresql://dxm:dxm369@localhost:5432/dxm369\" npx tsx:*)",
       "Bash(vercel env pull:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git branch:*)",
+      "Bash(git commit:*)",
+      "Bash(git --version:*)",
+      "Bash(git config:*)",
+      "Bash(gh:*)",
+      "Bash(paru -S:*)",
+      "Bash(vercel --version)",
+      "Bash(vercel:*)",
+      "Bash(printf:*)",
+      "Bash(timeout 10 vercel env add:*)",
+      "Bash(git commit -m \"docs: Add Vercel setup completion documentation\n\n- 16 environment variables configured\n- Generated secure secrets for production\n- Database setup instructions\n- Admin panel access guide\n- Deployment verification checklist\")",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(PGPASSWORD=\"ykupXjBJNEPlKdnH\" psql:*)"
     ],
     "deny": [],
     "ask": []

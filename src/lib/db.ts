@@ -29,7 +29,11 @@ const getDatabaseConfig = (): PoolConfig => {
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
     // SSL configuration: disable for local, enable for production cloud DBs
-    ssl: isLocal ? false : { rejectUnauthorized: false },
+    // For Supabase: explicitly allow self-signed certificates
+    ssl: isLocal ? false : {
+      rejectUnauthorized: false,
+      sslmode: 'require',
+    } as any,
   };
 };
 
@@ -52,16 +56,24 @@ export function getPool(): Pool {
   }
   
   if (!pool) {
-    pool = new Pool(getDatabaseConfig());
-    
+    const config = getDatabaseConfig();
+    pool = new Pool(config);
+
     // Handle pool errors
     pool.on('error', (err) => {
-      log.error('[DXM369 DB] Unexpected pool error:', err);
+      log.error('[DXM369 DB] Unexpected pool error:', {
+        message: err.message,
+        code: (err as any).code,
+        detail: (err as any).detail,
+      });
     });
-    
+
     // Log connection info in development
     if (env.NODE_ENV !== 'production') {
-      log.info('[DXM369 DB] Pool initialized');
+      log.info('[DXM369 DB] Pool initialized with SSL:', {
+        hasSSL: !!config.ssl,
+        isLocal: config.connectionString?.includes('localhost'),
+      });
     }
   }
   

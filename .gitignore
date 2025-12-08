@@ -70,3 +70,4 @@ playwright/.cache/
 # Don't commit large export files
 exports/
 *.json.gz
+.env*.local
