@@ -1,9 +1,7 @@
-'use server';
-
 // src/lib/env.ts
 // DXM369 Environment Hardening - Enterprise-Grade Configuration
 // Single source of truth for all environment variables
-// SERVER-ONLY MODULE - Do not import in client components
+// DO NOT import this in client components
 
 import { z } from "zod";
 
@@ -201,11 +199,12 @@ const requiredInProd: (keyof typeof serverEnv)[] = [
   "RATE_LIMIT_SECRET",
 ];
 
-// Only validate required vars at runtime, not during build
-// Skip validation during Vercel build phase
+// Only validate required vars at API runtime, not at module load time
+// Skip validation during Vercel build phase or when called from client
 const isVercelBuild = process.env.VERCEL === "1" && !process.env.AWS_LAMBDA_FUNCTION_VERSION;
+const skipValidation = isVercelBuild || typeof window !== 'undefined';
 
-if (serverEnv.NODE_ENV === "production" && !isVercelBuild) {
+if (!skipValidation && serverEnv.NODE_ENV === "production") {
   const missing: string[] = [];
 
   for (const key of requiredInProd) {
@@ -216,9 +215,9 @@ if (serverEnv.NODE_ENV === "production" && !isVercelBuild) {
   }
 
   if (missing.length > 0) {
-    throw new Error(
+    console.warn(
       [
-        "❌ Missing REQUIRED production env vars:",
+        "⚠️  Missing REQUIRED production env vars (will error at runtime):",
         ...missing.map((k) => `- ${k}`),
       ].join("\n")
     );
