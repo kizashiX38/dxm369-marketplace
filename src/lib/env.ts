@@ -72,7 +72,8 @@ const serverEnvSchema = z.object({
  */
 const clientEnvSchema = z.object({
   NEXT_PUBLIC_ENV: z
-    .enum(["development", "staging", "production"])
+    .string()
+    .optional()
     .default("development"),
 
   NEXT_PUBLIC_SITE_URL: z
