@@ -1,0 +1,9 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/earnings/sync",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
+

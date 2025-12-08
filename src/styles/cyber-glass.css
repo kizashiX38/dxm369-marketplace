@@ -1,0 +1,240 @@
+/* DXM369 Cyber-Glass Terminal Utilities */
+/* Weapons-grade UI components for hardware intelligence */
+
+/* Glass Panel System */
+.glass-panel-cyber {
+  @apply backdrop-blur-xl bg-slate-900/40 border border-slate-700/60;
+  background: linear-gradient(135deg, 
+    rgba(15, 23, 42, 0.8) 0%, 
+    rgba(30, 41, 59, 0.6) 50%, 
+    rgba(15, 23, 42, 0.9) 100%);
+  box-shadow: 
+    0 0 40px rgba(6, 182, 212, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.glass-panel-premium {
+  @apply backdrop-blur-2xl bg-slate-900/60 border border-cyan-400/30;
+  background: linear-gradient(135deg, 
+    rgba(15, 23, 42, 0.9) 0%, 
+    rgba(30, 41, 59, 0.7) 30%, 
+    rgba(6, 182, 212, 0.1) 70%, 
+    rgba(15, 23, 42, 0.95) 100%);
+  box-shadow: 
+    0 0 60px rgba(6, 182, 212, 0.25),
+    0 0 120px rgba(6, 182, 212, 0.1),
+    inset 0 2px 0 rgba(6, 182, 212, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Neon Glow System */
+.glow-cyan {
+  box-shadow: 
+    0 0 20px rgba(6, 182, 212, 0.4),
+    0 0 40px rgba(6, 182, 212, 0.2),
+    0 0 80px rgba(6, 182, 212, 0.1);
+}
+
+.glow-cyan-intense {
+  box-shadow: 
+    0 0 30px rgba(6, 182, 212, 0.6),
+    0 0 60px rgba(6, 182, 212, 0.4),
+    0 0 120px rgba(6, 182, 212, 0.2);
+}
+
+.glow-blue {
+  box-shadow: 
+    0 0 20px rgba(59, 130, 246, 0.4),
+    0 0 40px rgba(59, 130, 246, 0.2);
+}
+
+.glow-green {
+  box-shadow: 
+    0 0 20px rgba(34, 197, 94, 0.4),
+    0 0 40px rgba(34, 197, 94, 0.2);
+}
+
+/* Hologram Effects */
+.hologram-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.hologram-sheen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(6, 182, 212, 0.1) 50%, 
+    transparent 100%);
+  animation: hologram-sweep 3s ease-in-out infinite;
+}
+
+@keyframes hologram-sweep {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* Scanlines Overlay */
+.scanlines {
+  position: relative;
+}
+
+.scanlines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(6, 182, 212, 0.03) 2px,
+    rgba(6, 182, 212, 0.03) 4px
+  );
+  pointer-events: none;
+}
+
+/* Energy Bars */
+.energy-bar {
+  @apply relative h-2 bg-slate-800 rounded-full overflow-hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.energy-fill {
+  @apply h-full rounded-full transition-all duration-500;
+  background: linear-gradient(90deg, 
+    #ef4444 0%, 
+    #f97316 25%, 
+    #eab308 50%, 
+    #22c55e 75%, 
+    #06b6d4 100%);
+  box-shadow: 
+    0 0 10px rgba(6, 182, 212, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Neon Borders */
+.border-neon-cyan {
+  border: 1px solid rgba(6, 182, 212, 0.6);
+  box-shadow: 
+    0 0 10px rgba(6, 182, 212, 0.3),
+    inset 0 0 10px rgba(6, 182, 212, 0.1);
+}
+
+.border-neon-blue {
+  border: 1px solid rgba(59, 130, 246, 0.6);
+  box-shadow: 
+    0 0 10px rgba(59, 130, 246, 0.3),
+    inset 0 0 10px rgba(59, 130, 246, 0.1);
+}
+
+/* Hologram Buttons */
+.hologram-button {
+  @apply relative overflow-hidden transition-all duration-300;
+  background: linear-gradient(135deg, 
+    rgba(6, 182, 212, 0.1) 0%, 
+    rgba(6, 182, 212, 0.05) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.hologram-button:hover {
+  @apply glow-cyan;
+  background: linear-gradient(135deg, 
+    rgba(6, 182, 212, 0.2) 0%, 
+    rgba(6, 182, 212, 0.1) 100%);
+  border-color: rgba(6, 182, 212, 0.6);
+  transform: translateY(-1px);
+}
+
+.hologram-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(6, 182, 212, 0.3) 50%, 
+    transparent 100%);
+  transition: left 0.5s ease;
+}
+
+.hologram-button:hover::before {
+  left: 100%;
+}
+
+/* Tactical Grid */
+.tactical-grid {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(6, 182, 212, 0.1) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+/* Command Panel */
+.command-panel {
+  @apply glass-panel-premium;
+  background: linear-gradient(135deg, 
+    rgba(15, 23, 42, 0.95) 0%, 
+    rgba(30, 41, 59, 0.8) 30%, 
+    rgba(6, 182, 212, 0.05) 70%, 
+    rgba(15, 23, 42, 0.98) 100%);
+}
+
+/* Status Indicators */
+.status-online {
+  @apply inline-flex items-center gap-2;
+}
+
+.status-ping {
+  @apply w-2 h-2 bg-cyan-400 rounded-full;
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { 
+    opacity: 1; 
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+  }
+  50% { 
+    opacity: 0.3; 
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+  }
+}
+
+/* Cyber Typography */
+.cyber-title {
+  @apply font-bold tracking-wider uppercase;
+  text-shadow: 
+    0 0 10px rgba(6, 182, 212, 0.5),
+    0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.cyber-subtitle {
+  @apply text-xs font-mono tracking-widest uppercase opacity-70;
+  color: rgba(6, 182, 212, 0.8);
+}
+
+/* Mission Panel */
+.mission-panel {
+  @apply glass-panel-cyber border-l-2 border-l-cyan-400/60;
+  background: linear-gradient(90deg, 
+    rgba(6, 182, 212, 0.05) 0%, 
+    rgba(15, 23, 42, 0.8) 10%, 
+    rgba(15, 23, 42, 0.9) 100%);
+}
+
+/* Energy Beam Separator */
+.energy-beam {
+  @apply h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent;
+  box-shadow: 0 0 4px rgba(6, 182, 212, 0.4);
+}

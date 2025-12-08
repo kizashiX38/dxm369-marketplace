@@ -1,0 +1,70 @@
+<!-- RTX 4080 SUPER MSI Gaming X Trio -->
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#0f172a"/>
+  
+  <!-- GPU Card Base -->
+  <rect x="40" y="75" width="320" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  
+  <!-- MSI Gaming X Shroud -->
+  <rect x="50" y="85" width="300" height="130" rx="6" fill="#dc2626"/>
+  <rect x="55" y="90" width="290" height="120" rx="4" fill="#991b1b"/>
+  
+  <!-- Triple Fan Design -->
+  <circle cx="120" cy="150" r="30" fill="#4b5563" stroke="#6b7280" stroke-width="2"/>
+  <circle cx="200" cy="150" r="30" fill="#4b5563" stroke="#6b7280" stroke-width="2"/>
+  <circle cx="280" cy="150" r="30" fill="#4b5563" stroke="#6b7280" stroke-width="2"/>
+  
+  <!-- Fan Blades -->
+  <g transform="translate(120,150)">
+    <path d="M0,-20 L6,-10 L0,0 L-6,-10 Z" fill="#9ca3af"/>
+    <path d="M20,0 L10,6 L0,0 L10,-6 Z" fill="#9ca3af"/>
+    <path d="M0,20 L-6,10 L0,0 L6,10 Z" fill="#9ca3af"/>
+    <path d="M-20,0 L-10,-6 L0,0 L-10,6 Z" fill="#9ca3af"/>
+  </g>
+  <g transform="translate(200,150)">
+    <path d="M0,-20 L6,-10 L0,0 L-6,-10 Z" fill="#9ca3af"/>
+    <path d="M20,0 L10,6 L0,0 L10,-6 Z" fill="#9ca3af"/>
+    <path d="M0,20 L-6,10 L0,0 L6,10 Z" fill="#9ca3af"/>
+    <path d="M-20,0 L-10,-6 L0,0 L-10,6 Z" fill="#9ca3af"/>
+  </g>
+  <g transform="translate(280,150)">
+    <path d="M0,-20 L6,-10 L0,0 L-6,-10 Z" fill="#9ca3af"/>
+    <path d="M20,0 L10,6 L0,0 L10,-6 Z" fill="#9ca3af"/>
+    <path d="M0,20 L-6,10 L0,0 L6,10 Z" fill="#9ca3af"/>
+    <path d="M-20,0 L-10,-6 L0,0 L-10,6 Z" fill="#9ca3af"/>
+  </g>
+  
+  <!-- MSI Dragon Logo -->
+  <circle cx="200" cy="110" r="12" fill="#fbbf24"/>
+  <text x="200" y="115" text-anchor="middle" fill="#dc2626" font-family="Arial, sans-serif" font-size="8" font-weight="bold">MSI</text>
+  
+  <!-- Gaming X Branding -->
+  <text x="200" y="235" text-anchor="middle" fill="#e5e7eb" font-family="Arial, sans-serif" font-size="11" font-weight="bold">RTX 4080 SUPER</text>
+  <text x="200" y="250" text-anchor="middle" fill="#dc2626" font-family="Arial, sans-serif" font-size="9" font-weight="bold">GAMING X TRIO</text>
+  
+  <!-- RGB Light Bar -->
+  <rect x="60" y="195" width="280" height="4" rx="2" fill="url(#rgb-gradient)"/>
+  
+  <!-- Power Connectors -->
+  <rect x="50" y="65" width="12" height="6" rx="1" fill="#374151"/>
+  <rect x="65" y="65" width="12" height="6" rx="1" fill="#374151"/>
+  <rect x="80" y="65" width="12" height="6" rx="1" fill="#374151"/>
+  
+  <!-- I/O Bracket -->
+  <rect x="360" y="85" width="12" height="130" rx="2" fill="#4b5563"/>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="rgb-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+      <stop offset="33%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="66%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Performance Badge -->
+  <rect x="15" y="15" width="70" height="25" rx="12" fill="#1e40af" stroke="#3b82f6" stroke-width="1"/>
+  <text x="50" y="30" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="10" font-weight="bold">PREMIUM</text>
+</svg>

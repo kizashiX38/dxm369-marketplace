@@ -1,0 +1,68 @@
+<svg width="200" height="150" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- ASUS ROG Strix G16 Gaming Laptop -->
+  <rect width="200" height="150" fill="#0f172a"/>
+  
+  <!-- Laptop Base -->
+  <rect x="10" y="110" width="180" height="25" rx="12" fill="#1f2937"/>
+  <rect x="15" y="115" width="170" height="15" rx="8" fill="#374151"/>
+  
+  <!-- Laptop Screen -->
+  <rect x="20" y="20" width="160" height="95" rx="8" fill="#1e293b"/>
+  <rect x="25" y="25" width="150" height="85" rx="6" fill="#111827"/>
+  
+  <!-- Screen Display -->
+  <rect x="30" y="30" width="140" height="75" rx="4" fill="#000000"/>
+  <rect x="35" y="35" width="130" height="65" rx="2" fill="#1a1a2e"/>
+  
+  <!-- ROG Logo on Lid -->
+  <circle cx="100" cy="67" r="15" fill="#dc2626"/>
+  <text x="100" y="72" text-anchor="middle" fill="white" font-family="Arial" font-size="8" font-weight="bold">ROG</text>
+  
+  <!-- ASUS Branding -->
+  <text x="100" y="45" text-anchor="middle" fill="#6b7280" font-family="Arial" font-size="6">ASUS</text>
+  
+  <!-- Gaming Elements on Screen */}
+  <rect x="50" y="50" width="100" height="40" rx="2" fill="#16213e"/>
+  <text x="100" y="65" text-anchor="middle" fill="#06b6d4" font-family="Arial" font-size="5">GAMING</text>
+  <text x="100" y="75" text-anchor="middle" fill="#10b981" font-family="Arial" font-size="4">RTX 4070</text>
+  <text x="100" y="82" text-anchor="middle" fill="#8b5cf6" font-family="Arial" font-size="4">165Hz Display</text>
+  
+  <!-- Keyboard Area -->
+  <rect x="25" y="115" width="150" height="15" rx="2" fill="#2d3748"/>
+  
+  <!-- RGB Keyboard Backlight */}
+  <rect x="30" y="118" width="140" height="9" rx="1" fill="url(#rgbKeyboard)"/>
+  
+  <!-- Trackpad -->
+  <rect x="85" y="120" width="30" height="20" rx="2" fill="#4a5568"/>
+  
+  <!-- Ports (Left Side) -->
+  <rect x="15" y="125" width="4" height="2" fill="#6b7280"/>
+  <rect x="15" y="128" width="4" height="2" fill="#6b7280"/>
+  <rect x="15" y="131" width="6" height="2" fill="#6b7280"/>
+  
+  <!-- Ports (Right Side) */}
+  <rect x="181" y="125" width="4" height="2" fill="#6b7280"/>
+  <rect x="181" y="128" width="4" height="2" fill="#6b7280"/>
+  
+  <!-- Cooling Vents */}
+  <rect x="180" y="118" width="8" height="1" fill="#4a5568"/>
+  <rect x="180" y="120" width="8" height="1" fill="#4a5568"/>
+  <rect x="180" y="122" width="8" height="1" fill="#4a5568"/>
+  
+  <!-- ROG Strix Branding on Base */}
+  <text x="100" y="108" text-anchor="middle" fill="#dc2626" font-family="Arial" font-size="4" font-weight="bold">STRIX G16</text>
+  
+  <!-- Power Button */}
+  <circle cx="170" cy="122" r="2" fill="#dc2626"/>
+  
+  <defs>
+    <linearGradient id="rgbKeyboard" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ef4444"/>
+      <stop offset="25%" style="stop-color:#f97316"/>
+      <stop offset="50%" style="stop-color:#eab308"/>
+      <stop offset="75%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+  </defs>
+</svg>

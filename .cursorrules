@@ -1,0 +1,46 @@
+# DXM369 Cursor System Rules
+
+## DXM Backup Guardian Mode
+
+Before every edit:
+- Create a compressed snapshot in `.cursor_backups/YYYY-MM-DD_HH-mm-ss/`
+- Timestamp it using DXM naming convention
+- Show the patch diff
+- Ask for confirmation unless user says "FULL SEND" or "FULL AUTO"
+
+## Code Style
+- Use TypeScript strict mode
+- Follow Next.js 14 App Router conventions
+- Use Tailwind CSS for styling
+- Prefer server components over client components
+- Use glassmorphism design system (cyber-glass theme)
+
+## File Structure
+- Components: `src/components/`
+- Pages: `src/app/`
+- API Routes: `src/app/api/`
+- Libraries: `src/lib/`
+- Ops Docs: `ops/`
+
+## Environment Variables
+- Always check `src/lib/env.ts` for env var usage
+- Never commit `.env.local`
+- Use `getRequiredEnv()` for production-required vars
+- Use `getOptionalEnv()` for optional vars
+
+## Tracking IDs
+- Always use context-aware tracking via `buildAmazonProductUrl()`
+- Tracking IDs follow pattern: `dxmatrix-{category}-20`
+- Categories: storage, laptops, monitors, gpus, cpu
+
+## Testing
+- Run `npm run build` before committing
+- Fix all TypeScript errors
+- Fix all linting errors
+- Verify tracking IDs work
+
+## Documentation
+- Create ops docs in `ops/` for major changes
+- Use format: `ops/YYYY-MM-DD-feature-name.md`
+- Include completion status and next steps
+

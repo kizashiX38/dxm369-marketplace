@@ -1,0 +1,64 @@
+<!-- RTX 4090 Founders Edition Product Image -->
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#0f172a"/>
+  
+  <!-- GPU Card Base -->
+  <rect x="50" y="80" width="300" height="140" rx="8" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  
+  <!-- Cooler Shroud -->
+  <rect x="60" y="90" width="280" height="120" rx="6" fill="#374151"/>
+  
+  <!-- Dual Fan Design -->
+  <circle cx="140" cy="150" r="35" fill="#4b5563" stroke="#6b7280" stroke-width="2"/>
+  <circle cx="260" cy="150" r="35" fill="#4b5563" stroke="#6b7280" stroke-width="2"/>
+  
+  <!-- Fan Blades -->
+  <g transform="translate(140,150)">
+    <path d="M0,-25 L8,-12 L0,0 L-8,-12 Z" fill="#9ca3af"/>
+    <path d="M25,0 L12,8 L0,0 L12,-8 Z" fill="#9ca3af"/>
+    <path d="M0,25 L-8,12 L0,0 L8,12 Z" fill="#9ca3af"/>
+    <path d="M-25,0 L-12,-8 L0,0 L-12,8 Z" fill="#9ca3af"/>
+  </g>
+  <g transform="translate(260,150)">
+    <path d="M0,-25 L8,-12 L0,0 L-8,-12 Z" fill="#9ca3af"/>
+    <path d="M25,0 L12,8 L0,0 L12,-8 Z" fill="#9ca3af"/>
+    <path d="M0,25 L-8,12 L0,0 L8,12 Z" fill="#9ca3af"/>
+    <path d="M-25,0 L-12,-8 L0,0 L-12,8 Z" fill="#9ca3af"/>
+  </g>
+  
+  <!-- NVIDIA Logo Area -->
+  <rect x="320" y="100" width="20" height="40" rx="2" fill="#76b900"/>
+  <text x="200" y="240" text-anchor="middle" fill="#e5e7eb" font-family="Arial, sans-serif" font-size="12" font-weight="bold">GeForce RTX 4090</text>
+  
+  <!-- Power Connectors -->
+  <rect x="60" y="70" width="15" height="8" rx="2" fill="#374151"/>
+  <rect x="80" y="70" width="15" height="8" rx="2" fill="#374151"/>
+  <rect x="100" y="70" width="15" height="8" rx="2" fill="#374151"/>
+  
+  <!-- I/O Bracket -->
+  <rect x="350" y="90" width="15" height="120" rx="2" fill="#4b5563"/>
+  <rect x="352" y="100" width="11" height="15" rx="1" fill="#1f2937"/>
+  <rect x="352" y="120" width="11" height="15" rx="1" fill="#1f2937"/>
+  <rect x="352" y="140" width="11" height="15" rx="1" fill="#1f2937"/>
+  <rect x="352" y="160" width="11" height="15" rx="1" fill="#1f2937"/>
+  
+  <!-- Cyber Glow Effect -->
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Accent Lines -->
+  <line x1="60" y1="95" x2="340" y2="95" stroke="#06b6d4" stroke-width="1" opacity="0.6"/>
+  <line x1="60" y1="205" x2="340" y2="205" stroke="#06b6d4" stroke-width="1" opacity="0.6"/>
+  
+  <!-- Performance Badge -->
+  <rect x="15" y="15" width="80" height="25" rx="12" fill="#065f46" stroke="#10b981" stroke-width="1"/>
+  <text x="55" y="30" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="10" font-weight="bold">FLAGSHIP</text>
+</svg>

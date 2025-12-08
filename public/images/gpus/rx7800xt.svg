@@ -1,0 +1,68 @@
+<svg width="200" height="150" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- AMD RX 7800 XT Graphics Card -->
+  <rect width="200" height="150" fill="#0f172a"/>
+  
+  <!-- Main Card Body -->
+  <rect x="16" y="28" width="168" height="94" rx="7" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  
+  <!-- AMD Red Shroud -->
+  <rect x="21" y="33" width="158" height="84" rx="5" fill="#7f1d1d"/>
+  <rect x="26" y="38" width="148" height="74" rx="4" fill="#991b1b"/>
+  <rect x="31" y="43" width="138" height="64" rx="3" fill="#dc2626"/>
+  
+  <!-- Dual Fan Design -->
+  <circle cx="75" cy="75" r="22" fill="#450a0a" stroke="#7f1d1d" stroke-width="2"/>
+  <circle cx="125" cy="75" r="22" fill="#450a0a" stroke="#7f1d1d" stroke-width="2"/>
+  
+  <!-- Fan Blades -->
+  <g transform="translate(75,75)">
+    <path d="M-12,-12 L12,12 M12,-12 L-12,12 M0,-18 L0,18 M-18,0 L18,0" stroke="#fca5a5" stroke-width="2"/>
+    <circle r="4" fill="#7f1d1d"/>
+  </g>
+  <g transform="translate(125,75)">
+    <path d="M-12,-12 L12,12 M12,-12 L-12,12 M0,-18 L0,18 M-18,0 L18,0" stroke="#fca5a5" stroke-width="2"/>
+    <circle r="4" fill="#7f1d1d"/>
+  </g>
+  
+  <!-- AMD Logo -->
+  <rect x="85" y="52" width="30" height="10" rx="2" fill="#dc2626"/>
+  <text x="100" y="59" text-anchor="middle" fill="white" font-family="Arial" font-size="6" font-weight="bold">AMD</text>
+  
+  <!-- Radeon Branding -->
+  <text x="100" y="48" text-anchor="middle" fill="#fca5a5" font-family="Arial" font-size="5" font-weight="bold">RADEON</text>
+  
+  <!-- RX 7800 XT Label -->
+  <rect x="70" y="95" width="60" height="10" rx="2" fill="#450a0a"/>
+  <text x="100" y="102" text-anchor="middle" fill="#f87171" font-family="Arial" font-size="6" font-weight="bold">RX 7800 XT</text>
+  
+  <!-- Power Connectors -->
+  <rect x="162" y="48" width="10" height="6" rx="1" fill="#374151" stroke="#6b7280"/>
+  <rect x="162" y="58" width="10" height="6" rx="1" fill="#374151" stroke="#6b7280"/>
+  
+  <!-- I/O Bracket -->
+  <rect x="16" y="38" width="6" height="74" fill="#4b5563"/>
+  <rect x="17" y="46" width="3" height="6" fill="#1f2937"/>
+  <rect x="17" y="56" width="3" height="6" fill="#1f2937"/>
+  <rect x="17" y="66" width="3" height="6" fill="#1f2937"/>
+  <rect x="17" y="76" width="3" height="6" fill="#1f2937"/>
+  <rect x="17" y="86" width="3" height="6" fill="#1f2937"/>
+  
+  <!-- Heat Pipes -->
+  <rect x="35" y="117" width="130" height="2" fill="#9ca3af"/>
+  <rect x="40" y="119" width="120" height="1" fill="#d1d5db"/>
+  
+  <!-- AMD Red Accent -->
+  <rect x="30" y="110" width="140" height="2" fill="url(#amdGradient)"/>
+  
+  <!-- RDNA 3 Badge -->
+  <rect x="150" y="40" width="20" height="8" rx="1" fill="#450a0a"/>
+  <text x="160" y="46" text-anchor="middle" fill="#fca5a5" font-family="Arial" font-size="4" font-weight="bold">RDNA3</text>
+  
+  <defs>
+    <linearGradient id="amdGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#dc2626"/>
+      <stop offset="50%" style="stop-color:#f87171"/>
+      <stop offset="100%" style="stop-color:#dc2626"/>
+    </linearGradient>
+  </defs>
+</svg>

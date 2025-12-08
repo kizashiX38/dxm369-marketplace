@@ -1,0 +1,88 @@
+<svg width="200" height="150" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Intel i9-14900K CPU -->
+  <rect width="200" height="150" fill="#0f172a"/>
+  
+  <!-- CPU Package -->
+  <rect x="50" y="40" width="100" height="70" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <rect x="55" y="45" width="90" height="60" rx="3" fill="#374151"/>
+  <rect x="60" y="50" width="80" height="50" rx="2" fill="#4b5563"/>
+  
+  <!-- Intel Logo -->
+  <rect x="85" y="58" width="30" height="8" rx="1" fill="#0066cc"/>
+  <text x="100" y="64" text-anchor="middle" fill="white" font-family="Arial" font-size="5" font-weight="bold">intel</text>
+  
+  <!-- CPU Model -->
+  <text x="100" y="75" text-anchor="middle" fill="#e5e7eb" font-family="Arial" font-size="7" font-weight="bold">Core i9</text>
+  <text x="100" y="85" text-anchor="middle" fill="#06b6d4" font-family="Arial" font-size="6" font-weight="bold">14900K</text>
+  
+  <!-- LGA Pins (bottom) -->
+  <g transform="translate(50,110)">
+    <rect width="100" height="20" fill="#6b7280"/>
+    <!-- Pin grid pattern -->
+    <g fill="#9ca3af">
+      <circle cx="10" cy="5" r="0.5"/>
+      <circle cx="15" cy="5" r="0.5"/>
+      <circle cx="20" cy="5" r="0.5"/>
+      <circle cx="25" cy="5" r="0.5"/>
+      <circle cx="30" cy="5" r="0.5"/>
+      <circle cx="35" cy="5" r="0.5"/>
+      <circle cx="40" cy="5" r="0.5"/>
+      <circle cx="45" cy="5" r="0.5"/>
+      <circle cx="50" cy="5" r="0.5"/>
+      <circle cx="55" cy="5" r="0.5"/>
+      <circle cx="60" cy="5" r="0.5"/>
+      <circle cx="65" cy="5" r="0.5"/>
+      <circle cx="70" cy="5" r="0.5"/>
+      <circle cx="75" cy="5" r="0.5"/>
+      <circle cx="80" cy="5" r="0.5"/>
+      <circle cx="85" cy="5" r="0.5"/>
+      <circle cx="90" cy="5" r="0.5"/>
+      
+      <circle cx="10" cy="10" r="0.5"/>
+      <circle cx="15" cy="10" r="0.5"/>
+      <circle cx="20" cy="10" r="0.5"/>
+      <circle cx="25" cy="10" r="0.5"/>
+      <circle cx="30" cy="10" r="0.5"/>
+      <circle cx="35" cy="10" r="0.5"/>
+      <circle cx="40" cy="10" r="0.5"/>
+      <circle cx="45" cy="10" r="0.5"/>
+      <circle cx="50" cy="10" r="0.5"/>
+      <circle cx="55" cy="10" r="0.5"/>
+      <circle cx="60" cy="10" r="0.5"/>
+      <circle cx="65" cy="10" r="0.5"/>
+      <circle cx="70" cy="10" r="0.5"/>
+      <circle cx="75" cy="10" r="0.5"/>
+      <circle cx="80" cy="10" r="0.5"/>
+      <circle cx="85" cy="10" r="0.5"/>
+      <circle cx="90" cy="10" r="0.5"/>
+      
+      <circle cx="10" cy="15" r="0.5"/>
+      <circle cx="15" cy="15" r="0.5"/>
+      <circle cx="20" cy="15" r="0.5"/>
+      <circle cx="25" cy="15" r="0.5"/>
+      <circle cx="30" cy="15" r="0.5"/>
+      <circle cx="35" cy="15" r="0.5"/>
+      <circle cx="40" cy="15" r="0.5"/>
+      <circle cx="45" cy="15" r="0.5"/>
+      <circle cx="50" cy="15" r="0.5"/>
+      <circle cx="55" cy="15" r="0.5"/>
+      <circle cx="60" cy="15" r="0.5"/>
+      <circle cx="65" cy="15" r="0.5"/>
+      <circle cx="70" cy="15" r="0.5"/>
+      <circle cx="75" cy="15" r="0.5"/>
+      <circle cx="80" cy="15" r="0.5"/>
+      <circle cx="85" cy="15" r="0.5"/>
+      <circle cx="90" cy="15" r="0.5"/>
+    </g>
+  </g>
+  
+  <!-- Corner Notch -->
+  <rect x="45" y="35" width="8" height="8" fill="#0f172a"/>
+  
+  <!-- Specs -->
+  <text x="100" y="25" text-anchor="middle" fill="#94a3b8" font-family="Arial" font-size="4">24 Cores • 32 Threads</text>
+  <text x="100" y="30" text-anchor="middle" fill="#94a3b8" font-family="Arial" font-size="4">6.0 GHz Max Boost</text>
+  
+  <!-- Intel Blue Accent -->
+  <rect x="60" y="95" width="80" height="1" fill="#0066cc"/>
+</svg>

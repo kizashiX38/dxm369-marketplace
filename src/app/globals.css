@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* DXM369 Cyber-Glass Terminal System */
+@import '../styles/cyber-glass.css';
+
+/* DXM Product Image Cyber Glow Effects */
+.cyber-glow {
+  filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.3));
+  transition: filter 0.3s ease;
+}
+
+.cyber-glow:hover {
+  filter: drop-shadow(0 0 16px rgba(6, 182, 212, 0.6));
+}
+
+/* Enhanced image loading states */
+.image-loading {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+:root {
+  --background: #0b121b;
+  --foreground: #fafafa;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 
+    'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+@layer utilities {
+  .animate-pulse-soft {
+    animation: pulse-soft 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .clip-corner-tl {
+    clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px);
+  }
+  
+  .clip-corner-br {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+  }
+
+  .animate-scan-fast {
+    animation: scan-fast 4s linear infinite;
+  }
+
+  /* Glass & Holographic Effects */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    box-shadow: 
+      inset 0 1px 0 rgba(6, 182, 212, 0.05),
+      0 4px 15px -5px rgba(6, 182, 212, 0.1);
+  }
+
+  .glass-panel-secondary {
+    background: rgba(15, 23, 42, 0.2);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    box-shadow: 
+      inset 0 1px 0 rgba(6, 182, 212, 0.03),
+      0 2px 10px -3px rgba(6, 182, 212, 0.08);
+  }
+
+  .glass-hero {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    box-shadow: 
+      inset 0 2px 0 rgba(6, 182, 212, 0.08),
+      0 8px 25px -8px rgba(6, 182, 212, 0.15);
+  }
+
+  .glass-corner-accent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border-top: 1px solid rgba(6, 182, 212, 0.3);
+    border-left: 1px solid rgba(6, 182, 212, 0.3);
+  }
+
+  .glass-corner-accent::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+    border-right: 1px solid rgba(6, 182, 212, 0.3);
+  }
+
+  .holographic-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .holographic-sheen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(6, 182, 212, 0.1),
+      rgba(34, 211, 238, 0.15),
+      rgba(6, 182, 212, 0.1),
+      transparent
+    );
+    transition: left 0.8s ease-in-out;
+    pointer-events: none;
+  }
+
+  .holographic-sheen:hover::before {
+    left: 100%;
+  }
+
+  .animate-hologram-flicker {
+    animation: hologram-flicker 3s ease-in-out infinite;
+  }
+
+  .animate-neon-pulse {
+    animation: neon-pulse 2s ease-in-out infinite alternate;
+  }
+
+  .scanline-overlay {
+    position: relative;
+  }
+
+  .scanline-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(
+        transparent 0px,
+        rgba(255, 255, 255, 0.01) 1px,
+        transparent 2px
+      );
+    background-size: 100% 3px;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  @keyframes scan-fast {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes hologram-flicker {
+    0%, 100% { opacity: 1; }
+    98% { opacity: 1; }
+    99% { opacity: 0.95; }
+    99.5% { opacity: 1; }
+  }
+
+  @keyframes neon-pulse {
+    0% { 
+      box-shadow: 0 0 5px rgba(6, 182, 212, 0.3);
+    }
+    100% { 
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
+    }
+  }
+}

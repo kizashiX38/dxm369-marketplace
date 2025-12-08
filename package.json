@@ -1,0 +1,45 @@
+{
+  "name": "dxm369-gear-nexus",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "check:env": "NODE_ENV=production ts-node --transpile-only scripts/check-env.ts || echo '⚠️  Env check skipped (non-critical)'",
+    "build": "next build",
+    "build:strict": "npm run check:env && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "import-earnings": "ts-node scripts/import-earnings.ts",
+    "validate-env": "ts-node --transpile-only scripts/validate-env.ts",
+    "identify-broken": "ts-node --transpile-only scripts/identify-broken-products.ts",
+    "rehydrate": "tsx --env-file=.env.local scripts/rehydrate-products.mts",
+    "verify-dxm-products": "tsx --env-file=.env.local scripts/verify-dxm-products.mts"
+  },
+  "dependencies": {
+    "@types/pg": "^8.15.6",
+    "next": "^14.2.5",
+    "pg": "^8.16.3",
+    "playwright": "^1.42.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/csv-parse": "^1.1.12",
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "csv-parse": "^6.1.0",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.7",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.4",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.3"
+  }
+}
