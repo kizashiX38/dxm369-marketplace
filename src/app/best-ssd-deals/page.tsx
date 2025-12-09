@@ -8,7 +8,8 @@ import { DealCard } from "@/components/DealCard";
 import { generateBreadcrumbStructuredData } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate every hour for fresh deals while maintaining CDN caching
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Best SSD Deals 2025 | NVMe & SATA SSD Discounts | DXM369",

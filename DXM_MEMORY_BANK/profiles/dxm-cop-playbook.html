@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DXM-C.O.P. — Claude Optimization Protocol</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #05060a;
+      --card: #0c0f18;
+      --accent: #65c8ff;
+      --accent-soft: rgba(101, 200, 255, 0.15);
+      --accent-strong: #23a3ff;
+      --text-main: #f5f7ff;
+      --text-soft: #9ea4c7;
+      --danger: #ff4b81;
+      --success: #4ee38a;
+      --muted-border: #22263a;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      --radius-lg: 18px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #151b2e 0, #05060a 55%);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      padding: 32px 16px 48px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 32px;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(9, 12, 26, 0.9);
+      border: 1px solid rgba(161, 174, 255, 0.16);
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .badge span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(78, 227, 138, 0.9);
+    }
+
+    h1 {
+      font-size: 32px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h1 span.accent {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      color: var(--text-soft);
+      max-width: 620px;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.6fr);
+      gap: 20px;
+      margin-bottom: 22px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(101, 200, 255, 0.08), transparent 46%),
+                  radial-gradient(circle at bottom right, rgba(255, 75, 129, 0.06), transparent 52%),
+                  var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--muted-border);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 255, 0.4);
+      color: var(--accent);
+      background: rgba(10, 17, 38, 0.9);
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .metric-value {
+      font-size: 12px;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      color: var(--accent);
+    }
+
+    .diagram {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      white-space: pre;
+      background: radial-gradient(circle at top, rgba(101, 200, 255, 0.06), transparent 60%);
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 255, 0.16);
+      padding: 10px 12px;
+      margin-top: 8px;
+      color: #d9e2ff;
+      overflow-x: auto;
+    }
+
+    .section {
+      margin-top: 26px;
+      margin-bottom: 4px;
+      border-top: 1px solid rgba(57, 64, 99, 0.85);
+      padding-top: 18px;
+    }
+
+    .section h2 {
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 12px;
+      color: var(--accent-strong);
+    }
+
+    .section h3 {
+      font-size: 14px;
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+
+    p {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 8px;
+    }
+
+    ul li {
+      font-size: 13px;
+      color: var(--text-soft);
+      padding-left: 16px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+
+    ul li::before {
+      content: "▹";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 11px;
+      top: 3px;
+    }
+
+    code {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      background: rgba(9, 13, 28, 0.95);
+      border-radius: 6px;
+      padding: 2px 6px;
+      border: 1px solid rgba(148, 163, 255, 0.25);
+      color: #e5ebff;
+    }
+
+    .inline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      font-size: 11px;
+      border-radius: var(--radius-pill);
+      padding: 3px 8px;
+      border: 1px solid rgba(120, 130, 190, 0.7);
+      background: rgba(7, 9, 22, 0.95);
+      color: var(--text-soft);
+    }
+
+    .callout {
+      border-radius: 12px;
+      border: 1px dashed rgba(148, 163, 255, 0.6);
+      background: linear-gradient(135deg, rgba(101, 200, 255, 0.08), rgba(5, 6, 10, 0.9));
+      padding: 10px 12px;
+      font-size: 12px;
+      margin-top: 8px;
+      color: var(--text-soft);
+    }
+
+    .callout strong {
+      color: var(--accent);
+    }
+
+    .checklist {
+      font-size: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(57, 64, 99, 0.9);
+      background: rgba(6, 9, 20, 0.95);
+      padding: 8px 10px;
+      margin-top: 6px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4px;
+      color: var(--text-soft);
+    }
+
+    .checklist-item span.icon {
+      font-size: 12px;
+      margin-top: 1px;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 780px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      body {
+        padding: 20px 12px 32px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="badge-row">
+        <div class="badge"><span class="dot"></span> DXM SYSTEM PLAYBOOK</div>
+        <div class="badge">Claude Optimization Protocol</div>
+        <div class="badge">Version 1.0 · <span style="color:#a0a7ff;">Internal</span></div>
+      </div>
+      <h1>DXM-C.O.P. <span class="accent">Playbook</span></h1>
+      <p class="subtitle">
+        Split the brain. Externalize the memory. Compress the context. This playbook defines how
+        GPT and Claude operate as a single distributed cognition engine under the Operator's control.
+      </p>
+    </header>
+
+    <main>
+      <section class="grid">
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">Split Brain System</div>
+            <span class="pill">Architecture</span>
+          </div>
+          <p>
+            GPT handles strategy, reasoning, and compression. Claude focuses on execution and
+            minimal diffs. The Memory Bank holds all long-term state so no model carries history.
+          </p>
+          <div class="diagram">
+[Operator]
+    ↓ goals
+[ GPT Brain (Think) ]
+    ↓ atomic tasks
+[ Claude Brain (Do) ]
+    ↓ changes
+[ World + Memory Bank ]
+    ↑ feedback to GPT
+          </div>
+          <div class="callout">
+            <strong>Principle:</strong> Never send Claude the whole story. Send Claude only the line it needs to rewrite.
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">Execution Snapshot</div>
+            <span class="pill">At a Glance</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric-label">GPT Role</div>
+            <div class="metric-value">orchestrator</div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-label">Claude Role</div>
+            <div class="metric-value">executor</div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-label">Memory</div>
+            <div class="metric-value">externalized</div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-label">Task Shape</div>
+            <div class="metric-value">atomic</div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-label">Goal</div>
+            <div class="metric-value">max output / min tokens</div>
+          </div>
+          <div class="checklist">
+            <div class="checklist-item">
+              <span class="icon">✔</span>
+              <span>Claude sees only the diff, never the whole repo.</span>
+            </div>
+            <div class="checklist-item">
+              <span class="icon">✔</span>
+              <span>GPT performs multi-file reasoning and context compression.</span>
+            </div>
+            <div class="checklist-item">
+              <span class="icon">✔</span>
+              <span>All steady knowledge lives in the DXM Memory Bank.</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="roles">
+        <h2>01 · Roles & Responsibilities</h2>
+        <div class="inline-grid">
+          <div>
+            <h3>Operator (You)</h3>
+            <p>You define the mission, choose tools, and keep the loop tight.</p>
+            <ul>
+              <li>State the outcome, not the feeling.</li>
+              <li>Decide what belongs in Memory Bank vs ephemeral chat.</li>
+              <li>Enforce atomic tasks for Claude.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>GPT Brain (Strategy Layer)</h3>
+            <p>Used for thinking, not typing.</p>
+            <ul>
+              <li>Analyze problems and design step-by-step plans.</li>
+              <li>Summarize and compress large context into Claude-sized shards.</li>
+              <li>Generate exact prompts and patch instructions for Claude.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Claude Brain (Execution Layer)</h3>
+            <p>Used for diffs, not essays.</p>
+            <ul>
+              <li>Apply patches to specific files or blocks only.</li>
+              <li>Return minimal output: diffs, code blocks, short confirmations.</li>
+              <li>Avoid high-level reasoning and architecture decisions.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="memory-bank-schema">
+        <h2>02 · Memory Bank Schema</h2>
+        <p>
+          The DXM Memory Bank is the external cortex. It holds everything the models should not
+          carry: specs, rituals, baselines, session logs, and decisions.
+        </p>
+
+        <h3>Folder Layout</h3>
+        <div class="diagram">
+DXM_MEMORY_BANK/
+  profiles/
+    operator-profile.md
+    dxm-style-guide.md
+    llm-usage-protocol.md
+    claude_cop_preset.txt
+    gpt_orchestrator_preset.txt
+
+  projects/
+    &lt;project-id&gt;/
+      project-meta.yaml
+      instructions/
+      specs/
+      logs/
+      snapshots/
+
+  sessions/
+    &lt;timestamp&gt;_&lt;llm&gt;_&lt;topic&gt;.md
+        </div>
+
+        <h3>project-meta.yaml (Core Fields)</h3>
+        <div class="diagram">
+project_id: string
+name: string
+status: active|paused|archived
+description: string
+stack: { frontend: [], backend: [], infra: [] }
+llm_roles:
+  orchestrator:
+    model: string
+    responsibilities: []
+  executor:
+    model: string
+    responsibilities: []
+context_sources:
+  - type: file|url
+    path: string
+    role: overview|constraints|spec|data_model
+        </div>
+
+        <div class="callout">
+          <strong>Rule:</strong> If it may be needed again in 3 days, it belongs in the Memory Bank,
+          not in the scrollback.
+        </div>
+      </section>
+
+      <section class="section" id="flow">
+        <h2>03 · Operational Flow</h2>
+
+        <h3>Step 1 · Define Outcome</h3>
+        <p>
+          Start every session by writing a one-line outcome and optional constraints.
+        </p>
+        <div class="diagram">
+Outcome: "Make admin /bridge-fetch route safe and idempotent."
+Constraints:
+  - "No new features."
+  - "Use existing apiSafe() helper."
+  - "No changes to logging yet."
+        </div>
+
+        <h3>Step 2 · Think with GPT</h3>
+        <p>Send code/context to GPT and ask for a surgical plan and Claude-ready prompt.</p>
+        <div class="checklist">
+          <div class="checklist-item">
+            <span class="icon">➤</span>
+            <span>Identify exact files and lines to touch.</span>
+          </div>
+          <div class="checklist-item">
+            <span class="icon">➤</span>
+            <span>Produce a compressed view: only the relevant functions or blocks.</span>
+          </div>
+          <div class="checklist-item">
+            <span class="icon">➤</span>
+            <span>Generate an atomic instruction for Claude.</span>
+          </div>
+        </div>
+
+        <h3>Step 3 · Execute with Claude</h3>
+        <p>Use a preset header to keep Claude in execution mode.</p>
+        <div class="diagram">
+DXM-C.O.P. ACTIVE
+You are the execution engine only.
+No reasoning or architecture.
+Your job: precise diffs on the files I give you.
+If a file is not shown, ignore it.
+Return only the patch or updated code.
+
+NEXT ACTION →
+"Wrap the GET handler in src/app/api/admin/bridge-fetch/route.ts
+with apiSafe(handler). No other changes."
+        </div>
+
+        <h3>Step 4 · Log the Outcome</h3>
+        <p>
+          After a meaningful change, capture it in a session log inside the Memory Bank.
+        </p>
+        <div class="diagram">
+sessions/2025-12-08_claude-dev_bridge-fetch-hardening.md
+---
+project_id: dxm369-marketplace
+llm: claude-code
+files_touched:
+  - src/app/api/admin/bridge-fetch/route.ts
+decisions:
+  - "Standardized error response via apiSafe."
+---
+• Applied wrapper to GET handler.
+• Verified response shape against api-contracts.md.
+        </div>
+      </section>
+
+      <section class="section" id="checklists">
+        <h2>04 · Runbook Checklists</h2>
+        <div class="inline-grid">
+          <div>
+            <h3>Before Calling Claude</h3>
+            <div class="checklist">
+              <div class="checklist-item">
+                <span class="icon">☑</span>
+                <span>Is the task atomic (one file, one handler, one change)?</span>
+              </div>
+              <div class="checklist-item">
+                <span class="icon">☑</span>
+                <span>Did GPT already do the architecture thinking?</span>
+              </div>
+              <div class="checklist-item">
+                <span class="icon">☑</span>
+                <span>Do you have a minimal code slice ready, not the entire repo?</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3>After Claude Responds</h3>
+            <div class="checklist">
+              <div class="checklist-item">
+                <span class="icon">☑</span>
+                <span>Apply the diff and run tests / basic checks.</span>
+              </div>
+              <div class="checklist-item">
+                <span class="icon">☑</span>
+                <span>Capture important decisions into the Memory Bank.</span>
+              </div>
+              <div class="checklist-item">
+                <span class="icon">☑</span>
+                <span>Close the loop with GPT if next steps are needed.</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3>Anti-Patterns</h3>
+            <ul>
+              <li>"Fix everything in this project" → guaranteed context bloat.</li>
+              <li>Feeding Claude full repos repeatedly instead of diff slices.</li>
+              <li>Letting important knowledge live only in chat scrollback.</li>
+            </ul>
+            <div class="callout">
+              <strong>Guardrail:</strong> If the prompt feels like a paragraph, it probably
+              needs to be split into two tasks.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="rituals">
+        <h2>05 · Daily Operator Rituals</h2>
+        <p>Anchor behaviors that keep the system clean, fast, and scalable.</p>
+        <div class="chip-row">
+          <div class="chip">Morning: review yesterday's logs</div>
+          <div class="chip">Before coding: define outcome in one line</div>
+          <div class="chip">End of session: archive key notes to Memory Bank</div>
+          <div class="chip">Weekly: refactor instructions & specs</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

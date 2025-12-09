@@ -11,6 +11,10 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  // No app-level host redirects; Vercel domain settings handle www → apex.
+  async redirects() {
+    return [];
+  },
 };
 
 export default nextConfig;

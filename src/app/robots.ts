@@ -3,6 +3,7 @@
 // Optimized for search engine crawling and affiliate revenue
 
 import { MetadataRoute } from 'next';
+import { appConfig } from '@/lib/env';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -38,7 +39,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: 'https://dxm369.com/sitemap.xml',
-    host: 'https://dxm369.com',
+    sitemap: `${appConfig.siteUrl}/sitemap.xml`,
+    host: appConfig.siteUrl,
   };
 }

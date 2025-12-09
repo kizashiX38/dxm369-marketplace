@@ -5,12 +5,15 @@ import { DXMProductResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
 import { appConfig } from "@/lib/env";
 
+// ISR: Revalidate every hour for fresh deals while maintaining CDN caching
+export const revalidate = 3600;
+
 export default async function CPUsCommandConsole() {
   try {
     // In production, use absolute URL; in development, relative works
     const baseUrl = appConfig.baseUrl;
     const response = await fetch(`${baseUrl}/api/dxm/products/cpus`, {
-      cache: 'no-store',
+      next: { revalidate: 3600 },
       headers: {
         'Content-Type': 'application/json',
       },

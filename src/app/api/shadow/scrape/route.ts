@@ -19,6 +19,14 @@ interface ScrapeResponse {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse<ScrapeResponse>> {
+  // Disable Shadow Scraper on Vercel (Playwright incompatible with serverless)
+  if (process.env.VERCEL === "1") {
+    return NextResponse.json(
+      { ok: false, error: "Shadow Scraper disabled in production environment." },
+      { status: 503 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const asinsParam = searchParams.get('asins');
@@ -94,8 +102,24 @@ export async function GET(request: NextRequest): Promise<NextResponse<ScrapeResp
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<ScrapeResponse>> {
+  // Disable Shadow Scraper on Vercel (Playwright incompatible with serverless)
+  if (process.env.VERCEL === "1") {
+    return NextResponse.json(
+      { ok: false, error: "Shadow Scraper disabled in production environment." },
+      { status: 503 }
+    );
+  }
+
   try {
-    const body = await request.json();
+    let body: { asins?: string[] };
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { ok: false, error: 'Invalid JSON payload' },
+        { status: 400 }
+      );
+    }
     const { asins } = body;
 
     if (!asins || !Array.isArray(asins) || asins.length === 0) {
@@ -150,6 +174,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<ScrapeRes
 
 // Cleanup endpoint
 export async function DELETE(): Promise<NextResponse> {
+  // Disable Shadow Scraper on Vercel (Playwright incompatible with serverless)
+  if (process.env.VERCEL === "1") {
+    return NextResponse.json(
+      { ok: false, error: "Shadow Scraper disabled in production environment." },
+      { status: 503 }
+    );
+  }
+
   try {
     await closeScraper();
     return NextResponse.json({ ok: true, message: 'Scraper closed successfully' });

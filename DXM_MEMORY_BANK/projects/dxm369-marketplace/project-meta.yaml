@@ -1,0 +1,85 @@
+project_id: dxm369-marketplace
+name: "DXM369 Gear Nexus Marketplace"
+owner: "DXMatrix"
+status: "active"
+created_at: "2025-11-30T10:00:00+03:00"
+updated_at: "2025-12-09T02:30:00+03:00"
+
+description: >
+  Amazon-driven hardware marketplace with ASIN ingestion,
+  GPU-first launch, admin console, and DXM monitoring layer.
+  Shadow Intelligence Layer for autonomous Amazon scraping.
+
+stack:
+  frontend:
+    - "Next.js 14"
+    - "TypeScript"
+    - "Tailwind CSS"
+  backend:
+    - "Node.js"
+    - "PostgreSQL"
+    - "Playwright (Shadow Scraper)"
+  infra:
+    - "Vercel"
+    - "Supabase (PostgreSQL)"
+    - "Cloudflare"
+
+llm_roles:
+  orchestrator:
+    model: "gpt-5.1"
+    responsibilities:
+      - "architecture & reasoning"
+      - "task decomposition"
+      - "context compression for Claude"
+      - "multi-file strategy"
+      - "error chain breakdown"
+  executor:
+    model: "claude-code"
+    responsibilities:
+      - "file-level patches"
+      - "atomic diffs"
+      - "low-token transformations"
+      - "isolated function edits"
+
+context_sources:
+  - type: "file"
+    path: "CLAUDE.md"
+    role: "project_overview"
+  - type: "file"
+    path: "instructions/coding-conventions.md"
+    role: "constraints"
+  - type: "file"
+    path: "specs/api-contracts.md"
+    role: "api_specs"
+  - type: "file"
+    path: "database/schema-v2.sql"
+    role: "data_models"
+
+key_directories:
+  - "src/app/api/" # API routes
+  - "src/lib/" # Core business logic
+  - "src/components/" # UI components
+  - "src/services/" # External services (Shadow scraper)
+  - "database/" # Schema and migrations
+
+active_features:
+  - "Shadow Intelligence Layer"
+  - "DXM Value Score Algorithm"
+  - "Context-aware Tracking IDs"
+  - "Earnings Optimization System"
+
+tracking_ids:
+  base: "dxm369-20"
+  category:
+    - "dxmatrix-storage-20"
+    - "dxmatrix-laptops-20"
+    - "dxmatrix-monitors-20"
+    - "dxmatrix-gpus-20"
+  source:
+    - "dxmatrix-seo-20"
+    - "dxmatrix-x-20"
+    - "dxmatrix-youtube-20"
+  intent:
+    - "dxmatrix-review-20"
+    - "dxmatrix-top10-20"
+    - "dxmatrix-deal-20"

@@ -99,7 +99,12 @@ export default function ASINControlCenter() {
 
   const checkBridgeHealth = async () => {
     try {
-      const response = await fetch('/api/admin/fetcher-status');
+      const response = await fetch('/api/admin/fetcher-status', {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
+      });
       const data = await response.json();
       setBridgeHealth({
         status: data.data.status === 'online' ? 'healthy' : 'offline',
@@ -117,7 +122,12 @@ export default function ASINControlCenter() {
 
   const loadDatabaseStats = async () => {
     try {
-      const response = await fetch('/api/admin/products-db?action=stats');
+      const response = await fetch('/api/admin/products-db?action=stats', {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setDbStats(data.data);
@@ -276,7 +286,10 @@ export default function ASINControlCenter() {
 
       const response = await fetch('/api/admin/products-db', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
         body: JSON.stringify({
           action: 'bulkImport',
           products: Array.isArray(data) ? data : [data],
@@ -301,7 +314,12 @@ export default function ASINControlCenter() {
   const loadCacheStats = async () => {
     setCacheLoading(true);
     try {
-      const response = await fetch('/api/admin/fetcher-cache?action=stats');
+      const response = await fetch('/api/admin/fetcher-cache?action=stats', {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
+      });
       const data = await response.json();
       setCacheStats({
         total_cached: 0,
@@ -322,7 +340,10 @@ export default function ASINControlCenter() {
     try {
       const response = await fetch('/api/admin/fetcher-cache', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
         body: JSON.stringify({ action: 'clear' }),
       });
       if (response.ok) {
@@ -349,7 +370,10 @@ export default function ASINControlCenter() {
     try {
       const response = await fetch('/api/admin/products-db', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
         body: JSON.stringify({
           action: 'bulkImport',
           products: productsToSync,

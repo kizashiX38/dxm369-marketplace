@@ -69,12 +69,20 @@ export class AmazonShadowScraper {
     // Inject anti-detection scripts
     await this.injectStealthScripts(page);
 
+    // Set overall page timeout to prevent hanging
+    page.setDefaultTimeout(45000);
+
     try {
       const url = `https://www.amazon.com/dp/${asin}`;
       console.log(`[Shadow Scraper] Fetching ${url}...`);
 
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await page.waitForTimeout(2000); // Wait for JS rendering
+
+      // Wait for JS rendering with explicit timeout
+      await Promise.race([
+        page.waitForTimeout(2000),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Render timeout')), 10000))
+      ]);
 
       // Check for captcha or error page
       const isCaptcha = await page.$('#captchacharacters');

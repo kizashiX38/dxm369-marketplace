@@ -326,7 +326,7 @@ export function QuickNewsletterSignup({ className = "" }: { className?: string }
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`flex gap-2 ${className}`}>
+    <form onSubmit={handleSubmit} className={`relative flex gap-2 ${className}`}>
       <input
         type="email"
         value={email}

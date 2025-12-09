@@ -147,7 +147,7 @@
   "related_applications": [
     {
       "platform": "webapp",
-      "url": "https://dxm369.com/manifest.json"
+      "url": "/manifest.json"
     }
   ],
   "prefer_related_applications": false,

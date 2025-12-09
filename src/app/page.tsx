@@ -4,8 +4,8 @@ import { DXMProductResponse } from "@/types/api";
 import { DealCard } from "@/components/DealCard";
 import { appConfig } from "@/lib/env";
 
-// Force dynamic rendering - deals require real-time API calls
-export const dynamic = 'force-dynamic';
+// ISR: Revalidate every hour for fresh deals while maintaining CDN caching
+export const revalidate = 3600;
 
 export default async function Home() {
   // Fetch real deal data for homepage sections from normalized API routes
@@ -17,10 +17,10 @@ export default async function Home() {
   try {
     const baseUrl = appConfig.baseUrl;
     
-    // Fetch from normalized API routes
+    // Fetch from normalized API routes with ISR caching
     const [gpusRes, buildsRes] = await Promise.all([
-      fetch(`${baseUrl}/api/dxm/products/gpus`, { cache: 'no-store', headers: { 'Content-Type': 'application/json' } }).catch(() => null),
-      fetch(`${baseUrl}/api/dxm/products/builds`, { cache: 'no-store', headers: { 'Content-Type': 'application/json' } }).catch(() => null),
+      fetch(`${baseUrl}/api/dxm/products/gpus`, { next: { revalidate: 3600 }, headers: { 'Content-Type': 'application/json' } }).catch(() => null),
+      fetch(`${baseUrl}/api/dxm/products/builds`, { next: { revalidate: 3600 }, headers: { 'Content-Type': 'application/json' } }).catch(() => null),
     ]);
 
     if (gpusRes?.ok) {

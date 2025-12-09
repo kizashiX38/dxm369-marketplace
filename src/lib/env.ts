@@ -80,7 +80,7 @@ const clientEnvSchema = z.object({
     .string()
     .min(1, "NEXT_PUBLIC_SITE_URL is required")
     .url("NEXT_PUBLIC_SITE_URL must be a valid URL")
-    .default("http://localhost:3000"),
+    .default(process.env.NODE_ENV === "production" ? "" : "http://localhost:3000"),
 
   NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG: z
     .string()
@@ -153,7 +153,13 @@ const rawServerEnv = {
 
 const rawClientEnv = {
   NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
-  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  // Smart fallback for NEXT_PUBLIC_SITE_URL:
+  // 1. Use explicit NEXT_PUBLIC_SITE_URL if set
+  // 2. Vercel preview: use VERCEL_URL (auto-injected by Vercel)
+  // 3. Local dev: use localhost:3000
+  // 4. Production without explicit URL: undefined (will trigger validation error)
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
   NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG: process.env.NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG,
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   NEXT_PUBLIC_ADMIN_KEY: process.env.NEXT_PUBLIC_ADMIN_KEY,
@@ -217,12 +223,12 @@ const requiredInProd: (keyof typeof serverEnv)[] = [
 // Skip validation during:
 // 1. Vercel build phase (when building Next.js app)
 // 2. Browser execution (typeof window check)
-// 3. Development environment
+// DO NOT SKIP in production server runtime (this is where validation matters)
 const isVercelBuild = process.env.VERCEL === "1" && !process.env.AWS_LAMBDA_FUNCTION_VERSION;
 const isProduction = process.env.NODE_ENV === "production";
-const skipValidation = isVercelBuild || isProduction || typeof window !== 'undefined';
+const skipValidation = typeof window !== 'undefined' || isVercelBuild;
 
-// This warning is only for developers to see during local testing
+// Validate required vars in production server runtime (API routes, serverless functions)
 if (!skipValidation && serverEnv.NODE_ENV === "production") {
   const missing: string[] = [];
 

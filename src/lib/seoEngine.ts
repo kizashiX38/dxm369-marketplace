@@ -5,6 +5,7 @@
 import { Metadata } from "next";
 import { DealRadarItem } from "./dealRadar";
 import { buildAmazonLink } from "./affiliateConfig";
+import { appConfig } from "./env";
 
 export interface SEOAnalysis {
   score: number; // 0-100 SEO score
@@ -97,7 +98,7 @@ export class DXMSEOEngine {
   private brandKeywords: string[];
 
   constructor() {
-    this.baseUrl = "https://dxm369.com";
+    this.baseUrl = appConfig.siteUrl;
     this.siteName = "DXM369 Gear Nexus";
     this.brandKeywords = ["DXM369", "DXM score", "hardware intelligence", "gear nexus"];
   }

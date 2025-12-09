@@ -50,7 +50,8 @@ export const GET = apiSafe(async () => {
         idleCount: status.idleCount,
         waitingCount: status.waitingCount,
       };
-    } catch {
+    } catch (error) {
+      console.warn('[Health Check] DB connection test failed:', error instanceof Error ? error.message : String(error));
       dbConnected = false;
     }
   }

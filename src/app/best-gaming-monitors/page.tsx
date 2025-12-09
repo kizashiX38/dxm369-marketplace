@@ -7,7 +7,8 @@ import { DealCard } from "@/components/DealCard";
 import { generateBreadcrumbStructuredData } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate every hour for fresh deals while maintaining CDN caching
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Best Gaming Monitor Deals 2025 | 144Hz, 4K, & Ultrawide Discounts | DXM369",

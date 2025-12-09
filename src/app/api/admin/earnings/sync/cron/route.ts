@@ -43,11 +43,12 @@ export const GET = apiSafe(async (request: NextRequest) => {
     }),
   });
 
-  const syncData = await syncResponse.json();
-
   if (!syncResponse.ok) {
-    throw new Error(syncData.error || "Sync failed");
+    const errorText = await syncResponse.text().catch(() => "Unknown error");
+    throw new Error(`Sync failed (${syncResponse.status}): ${errorText}`);
   }
+
+  const syncData = await syncResponse.json().catch(() => ({ ok: false, error: "Invalid JSON response" }));
 
   return NextResponse.json({
     ok: true,

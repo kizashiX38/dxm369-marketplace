@@ -8,7 +8,8 @@ import { generateBreadcrumbStructuredData } from "@/lib/seo";
 import { appConfig } from "@/lib/env";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate every hour for fresh deals while maintaining CDN caching
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "RTX 4070 vs RX 7800 XT Comparison 2025 | Which GPU is Better? | DXM369",
@@ -32,7 +33,7 @@ export default async function RTX4070vsRX7800XTPage() {
   // Fetch from normalized API route
   const baseUrl = appConfig.baseUrl;
   const response = await fetch(`${baseUrl}/api/dxm/products/gpus`, {
-    cache: 'no-store',
+    next: { revalidate: 3600 },
     headers: {
       'Content-Type': 'application/json',
     },

@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { emailMarketing } from "@/lib/emailMarketing";
+import { appConfig } from "@/lib/env";
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,12 +23,13 @@ export async function POST(req: NextRequest) {
     if (subscriberId) {
       success = await emailMarketing.unsubscribe(subscriberId);
     } else if (email) {
-      // Find subscriber by email and unsubscribe
-      // This would require adding a method to find by email
-      // For now, return error asking for subscriberId
+      // Security: Email-only unsubscribe is not supported
+      // Users must use the signed unsubscribe link from their email
+      // This prevents malicious unsubscription of arbitrary addresses
+      console.warn(`[EMAIL_UNSUBSCRIBE] Rejected email-only unsubscribe attempt: ${email.substring(0, 3)}***`);
       return NextResponse.json({
         success: false,
-        error: "Please use the unsubscribe link from your email for security"
+        error: "For security, please use the unsubscribe link from your email. This prevents unauthorized unsubscriptions."
       }, { status: 400 });
     }
 
@@ -53,6 +55,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const siteUrl = appConfig.siteUrl;
+
   try {
     const { searchParams } = new URL(req.url);
     const subscriberId = searchParams.get("id");
@@ -127,7 +131,7 @@ export async function GET(req: NextRequest) {
               We're sorry to see you go! If you change your mind, you can always 
               subscribe again on our website.
             </div>
-            <a href="https://dxm369.com" class="button">Visit DXM369</a>
+            <a href="${siteUrl}" class="button">Visit DXM369</a>
           </div>
         </body>
         </html>
@@ -195,7 +199,7 @@ export async function GET(req: NextRequest) {
               <br><br>
               If you continue to receive emails, please contact our support team.
             </div>
-            <a href="https://dxm369.com/contact" class="button">Contact Support</a>
+            <a href="${siteUrl}/contact" class="button">Contact Support</a>
           </div>
         </body>
         </html>

@@ -88,7 +88,7 @@ export async function saveProductToDB(data: {
     ]
   );
 
-  if (!result) throw new Error(`Failed to save product ${data.asin}`);
+  if (!result) throw new Error(`Failed to save product ${data.asin}: no result returned`);
   return result;
 }
 
@@ -245,6 +245,7 @@ export async function refreshProduct(id: number): Promise<MarketplaceProduct> {
 
 /**
  * Import products from JSON array
+ * If title is provided, allows direct import without Amazon API validation (for bulk seeding)
  */
 export async function bulkImportProducts(
   products: Array<{ asin: string; category: string; title?: string }>
@@ -260,35 +261,48 @@ export async function bulkImportProducts(
         throw new Error(`Invalid ASIN format: ${item.asin}`);
       }
 
-      // ATOMIC OPERATION: Fetch from Amazon FIRST, only insert if successful
-      const amazonData = await fetchProductFromAmazon(item.asin);
-      if (!amazonData) {
-        throw new Error("Product not found on Amazon");
+      // If title is provided, allow direct insert (for bulk seeding POC)
+      if (item.title) {
+        await saveProductToDB({
+          asin: item.asin,
+          category: item.category,
+          title: item.title,
+          price: 99.99, // Placeholder for POC
+        });
+
+        await logSync(item.asin, "import", "success", "Direct import (seeding)");
+        success++;
+      } else {
+        // ATOMIC OPERATION: Fetch from Amazon FIRST, only insert if successful
+        const amazonData = await fetchProductFromAmazon(item.asin);
+        if (!amazonData) {
+          throw new Error("Product not found on Amazon");
+        }
+
+        // STRICT VALIDATION: Only save if we have complete metadata
+        // This prevents "UNKNOWN PRODUCT" from entering the database
+        if (!amazonData.title || amazonData.title === "Unknown Product") {
+          throw new Error("Incomplete product data: missing or invalid title");
+        }
+
+        if (!amazonData.price || amazonData.price < 50) {
+          throw new Error(`Suspicious price ($${amazonData.price}) - likely placeholder data`);
+        }
+
+        // Save to DB only after validation passes
+        await saveProductToDB({
+          asin: item.asin,
+          category: item.category,
+          title: item.title || amazonData.title,
+          image_url: amazonData.imageUrl,
+          price: amazonData.price,
+          rating: amazonData.dxmScore,
+          data_raw: amazonData
+        });
+
+        await logSync(item.asin, "import", "success");
+        success++;
       }
-
-      // STRICT VALIDATION: Only save if we have complete metadata
-      // This prevents "UNKNOWN PRODUCT" from entering the database
-      if (!amazonData.title || amazonData.title === "Unknown Product") {
-        throw new Error("Incomplete product data: missing or invalid title");
-      }
-
-      if (!amazonData.price || amazonData.price < 50) {
-        throw new Error(`Suspicious price ($${amazonData.price}) - likely placeholder data`);
-      }
-
-      // Save to DB only after validation passes
-      await saveProductToDB({
-        asin: item.asin,
-        category: item.category,
-        title: item.title || amazonData.title,
-        image_url: amazonData.imageUrl,
-        price: amazonData.price,
-        rating: amazonData.dxmScore,
-        data_raw: amazonData
-      });
-
-      await logSync(item.asin, "import", "success");
-      success++;
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
       errors.push(`${item.asin}: ${msg}`);

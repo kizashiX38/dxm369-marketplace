@@ -29,10 +29,17 @@ const getDatabaseConfig = (): PoolConfig => {
   const poolMin = isLocal ? 1 : 2;
   const poolMax = isLocal ? 5 : (isPooler ? 3 : 10); // Pooler = fewer local connections needed
 
+  // Pool sizing (configurable via env vars):
+  // - DATABASE_POOL_MAX: max connections per instance (default: 10 for serverless, 5 for local)
+  // - DATABASE_POOL_MIN: idle connections to keep warm (default: 2 for serverless, 1 for local)
+  // Vercel serverless: keep MAX modest (5-10) to avoid exhausting Postgres connection limits
+  const configuredMax = parseInt(env.DATABASE_POOL_MAX || String(poolMax), 10);
+  const configuredMin = parseInt(env.DATABASE_POOL_MIN || String(poolMin), 10);
+
   const config: PoolConfig = {
     connectionString,
-    max: parseInt(env.DATABASE_POOL_MAX || String(poolMax), 10),
-    min: parseInt(env.DATABASE_POOL_MIN || String(poolMin), 10),
+    max: Math.max(1, isNaN(configuredMax) ? poolMax : configuredMax),
+    min: Math.max(0, isNaN(configuredMin) ? poolMin : configuredMin),
     idleTimeoutMillis: isPooler ? 10000 : 30000, // Pooler has shorter timeouts
     connectionTimeoutMillis: 5000,
   };

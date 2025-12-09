@@ -30,7 +30,12 @@ export default function ProductsAdminPage() {
   async function loadProducts() {
     try {
       setLoading(true);
-      const res = await fetch(`/api/admin/products/list?category=${selectedCategory}`);
+      const res = await fetch(`/api/admin/products/list?category=${selectedCategory}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
+      });
       const data = await res.json();
       if (data.ok) {
         setProducts(data.products || []);
@@ -54,7 +59,10 @@ export default function ProductsAdminPage() {
       setLoading(true);
       const res = await fetch('/api/admin/products/add', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
         body: JSON.stringify({ asin, category: selectedCategory })
       });
 
@@ -77,7 +85,10 @@ export default function ProductsAdminPage() {
     try {
       const res = await fetch('/api/admin/products/toggleVisible', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
         body: JSON.stringify({ id, visible: !visible })
       });
 
@@ -94,7 +105,10 @@ export default function ProductsAdminPage() {
       setLoading(true);
       const res = await fetch('/api/admin/products/refresh', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
         body: JSON.stringify({ id })
       });
 
@@ -113,7 +127,10 @@ export default function ProductsAdminPage() {
       setLoading(true);
       const res = await fetch('/api/admin/products/delete', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
         body: JSON.stringify({ id })
       });
 
@@ -139,6 +156,9 @@ export default function ProductsAdminPage() {
 
       const res = await fetch('/api/admin/products/bulkImport', {
         method: 'POST',
+        headers: {
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
+        },
         body: formData
       });
 

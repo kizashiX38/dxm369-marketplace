@@ -1,0 +1,55 @@
+flowchart LR
+    subgraph Operator["Operator (DXMatrix)"]
+        O1[Define goals]
+        O2[Select task]
+        O3[Trigger tools]
+    end
+
+    subgraph GPT["GPT Brain (Strategy Layer)"]
+        G1[Analyze problem]
+        G2[Design plan<br/>steps, files, diffs]
+        G3[Compress context<br/>minimal shards]
+        G4[Generate atomic tasks<br/>for Claude]
+    end
+
+    subgraph Claude["Claude Brain (Execution Layer)"]
+        C1[Receive atomic task]
+        C2[Apply patch/diff]
+        C3[Return minimal output]
+    end
+
+    subgraph Memory["DXM Memory Bank<br/>External Context Layer"]
+        M1[Specs & Requirements]
+        M2[Architecture Notes]
+        M3[Session Logs]
+        M4[Playbooks & Rituals]
+        M5[Snapshots & Baselines]
+    end
+
+    subgraph World["Codebase & Systems"]
+        W1[Repos / Files]
+        W2[APIs / Infra]
+        W3[Dashboards / Docs]
+    end
+
+    O1 --> O2 --> O3
+    O3 --> G1
+    W1 --> G1
+    W2 --> G1
+    W3 --> G1
+
+    G1 --> G2 --> G3 --> G4
+    G4 --> C1
+    C1 --> C2 --> C3
+
+    C3 --> W1
+    C3 --> W2
+
+    G1 --- M1
+    G2 --- M1
+    G2 --- M2
+    C3 --- M3
+    O3 --- M4
+    W1 --- M5
+
+    click Memory "#memory-bank-schema" "DXM Memory Bank Schema"

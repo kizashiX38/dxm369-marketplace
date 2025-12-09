@@ -150,49 +150,57 @@ export async function getClickAnalytics(timeframe: 'hour' | 'day' | 'week' | 'mo
     };
   }
   
-  const intervals: Record<string, string> = {
-    hour: '1 hour',
-    day: '1 day',
-    week: '7 days',
-    month: '30 days',
+  const intervalMap: Record<string, { value: string; unit: string }> = {
+    hour: { value: '1', unit: 'hour' },
+    day: { value: '1', unit: 'day' },
+    week: { value: '7', unit: 'days' },
+    month: { value: '30', unit: 'days' },
   };
-  
-  const interval = intervals[timeframe];
-  
+
+  const intervalConfig = intervalMap[timeframe];
+  if (!intervalConfig) {
+    return { totalClicks: 0, byCategory: {}, bySource: {}, topProducts: [] };
+  }
+  const intervalStr = `${intervalConfig.value} ${intervalConfig.unit}`;
+
   try {
-    // Total clicks
+    // Total clicks - using parameterized interval
     const totalResult = await query<{ count: string }>(
-      `SELECT COUNT(*) as count FROM click_events WHERE timestamp > NOW() - INTERVAL '${interval}'`
+      `SELECT COUNT(*) as count FROM click_events WHERE timestamp > NOW() - $1::interval`,
+      [intervalStr]
     );
     const totalClicks = parseInt(totalResult?.rows[0]?.count || '0', 10);
-    
+
     // By category
     const categoryResult = await query<{ category: string; count: string }>(
-      `SELECT category, COUNT(*) as count FROM click_events 
-       WHERE timestamp > NOW() - INTERVAL '${interval}'
-       GROUP BY category`
+      `SELECT category, COUNT(*) as count FROM click_events
+       WHERE timestamp > NOW() - $1::interval
+       GROUP BY category`,
+      [intervalStr]
     );
     const byCategory: Record<string, number> = {};
     categoryResult?.rows.forEach(row => {
       byCategory[row.category] = parseInt(row.count, 10);
     });
-    
+
     // By source
     const sourceResult = await query<{ source: string; count: string }>(
-      `SELECT source, COUNT(*) as count FROM click_events 
-       WHERE timestamp > NOW() - INTERVAL '${interval}'
-       GROUP BY source`
+      `SELECT source, COUNT(*) as count FROM click_events
+       WHERE timestamp > NOW() - $1::interval
+       GROUP BY source`,
+      [intervalStr]
     );
     const bySource: Record<string, number> = {};
     sourceResult?.rows.forEach(row => {
       bySource[row.source] = parseInt(row.count, 10);
     });
-    
+
     // Top products
     const topResult = await query<{ asin: string; clicks: string }>(
-      `SELECT asin, COUNT(*) as clicks FROM click_events 
-       WHERE timestamp > NOW() - INTERVAL '${interval}'
-       GROUP BY asin ORDER BY clicks DESC LIMIT 10`
+      `SELECT asin, COUNT(*) as clicks FROM click_events
+       WHERE timestamp > NOW() - $1::interval
+       GROUP BY asin ORDER BY clicks DESC LIMIT 10`,
+      [intervalStr]
     );
     const topProducts = topResult?.rows.map(row => ({
       asin: row.asin,

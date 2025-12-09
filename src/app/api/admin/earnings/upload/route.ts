@@ -21,7 +21,7 @@ function parseNumeric(value: string | undefined): number | null {
 /**
  * Parse an integer value from CSV
  */
-function parseInt(value: string | undefined): number | null {
+function parseIntValue(value: string | undefined): number | null {
   if (!value) return null;
   const cleaned = value.replace(/[,\s]/g, '').trim();
   const parsed = Number.parseInt(cleaned, 10);
@@ -94,10 +94,10 @@ export const POST = apiSafe(async (request: NextRequest) => {
         );
         const marketplace = row['Marketplace'] || row['marketplace'] || 'US';
         const trackingId = row['Tracking ID'] || row['tracking_id'] || row['Tracking ID'] || '';
-        const clicks = parseInt(row['Clicks'] || row['clicks']);
-        const orderedItems = parseInt(row['Ordered Items'] || row['ordered_items'] || row['Ordered Items']);
-        const shippedItems = parseInt(row['Shipped Items'] || row['shipped_items'] || row['Shipped Items']);
-        const returnedItems = parseInt(row['Returned Items'] || row['returned_items'] || row['Returned Items']);
+        const clicks = parseIntValue(row['Clicks'] || row['clicks']);
+        const orderedItems = parseIntValue(row['Ordered Items'] || row['ordered_items'] || row['Ordered Items']);
+        const shippedItems = parseIntValue(row['Shipped Items'] || row['shipped_items'] || row['Shipped Items']);
+        const returnedItems = parseIntValue(row['Returned Items'] || row['returned_items'] || row['Returned Items']);
         const commission = parseNumeric(row['Commission'] || row['commission']);
         const bounties = parseNumeric(row['Bounties'] || row['bounties']);
         const adFees = parseNumeric(row['Ad Fees'] || row['ad_fees'] || row['Ad Fees']);

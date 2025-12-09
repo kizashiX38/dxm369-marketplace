@@ -1,0 +1,88 @@
+erDiagram
+    product_catalog {
+        varchar asin PK "Amazon Standard ID"
+        text title "Product title"
+        decimal price "Current price"
+        varchar category "gpu|cpu|laptop|monitor|storage|memory|motherboard|psu"
+        jsonb images "Array of image URLs"
+        jsonb specs "Specifications object"
+        decimal rating "Star rating 0-5"
+        integer review_count "Number of reviews"
+        integer discount_percent "Current discount %"
+        decimal dxm_score "DXM Value Score 0-10"
+        varchar affiliate_tag "dxm369-20"
+        timestamp last_scraped_at "Last Shadow scrape"
+        timestamp last_verified_at "Last PA-API verify"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    shadow_scrape_log {
+        uuid id PK
+        varchar asin FK
+        boolean success "Scrape succeeded"
+        text error_message "Error if failed"
+        jsonb raw_data "Raw scraped data"
+        integer response_time_ms "Scrape duration"
+        timestamp scraped_at
+    }
+
+    price_history {
+        uuid id PK
+        varchar asin FK
+        decimal price "Price at time"
+        decimal list_price "MSRP if available"
+        integer discount_percent
+        varchar source "shadow|paapi|manual"
+        timestamp recorded_at
+    }
+
+    offers {
+        uuid id PK
+        varchar asin FK
+        decimal deal_price
+        decimal original_price
+        integer discount_percent
+        varchar deal_type "lightning|daily|coupon|standard"
+        timestamp starts_at
+        timestamp expires_at
+        boolean is_active
+        timestamp created_at
+    }
+
+    click_events {
+        uuid id PK
+        varchar asin FK
+        varchar tracking_id "dxm369-20 or context-specific"
+        varchar category
+        varchar source_page "Where click originated"
+        varchar user_agent
+        varchar ip_hash "Hashed IP"
+        timestamp clicked_at
+    }
+
+    earnings {
+        uuid id PK
+        varchar tracking_id "Tracking ID"
+        date report_date
+        integer clicks
+        integer orders
+        decimal revenue
+        decimal epc "Earnings per click"
+        decimal conversion_rate
+        timestamp synced_at
+    }
+
+    email_subscribers {
+        uuid id PK
+        varchar email UK
+        varchar status "active|unsubscribed"
+        jsonb preferences "Category preferences"
+        timestamp subscribed_at
+        timestamp unsubscribed_at
+    }
+
+    product_catalog ||--o{ shadow_scrape_log : "has scrape history"
+    product_catalog ||--o{ price_history : "has price history"
+    product_catalog ||--o{ offers : "has offers"
+    product_catalog ||--o{ click_events : "tracks clicks"

@@ -8,7 +8,8 @@ import { generateBreadcrumbStructuredData } from "@/lib/seo";
 import { appConfig } from "@/lib/env";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate every hour for fresh deals while maintaining CDN caching
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Best GPU Deals 2025 | Top Graphics Card Discounts | DXM369",
@@ -29,10 +30,10 @@ export const metadata: Metadata = {
 };
 
 export default async function BestGPUDealsPage() {
-  // Fetch from normalized API route
+  // Fetch from normalized API route with ISR caching
   const baseUrl = appConfig.baseUrl;
   const response = await fetch(`${baseUrl}/api/dxm/products/gpus`, {
-    cache: 'no-store',
+    next: { revalidate: 3600 },
     headers: {
       'Content-Type': 'application/json',
     },

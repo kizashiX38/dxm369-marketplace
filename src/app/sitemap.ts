@@ -4,10 +4,20 @@
 
 import { MetadataRoute } from 'next';
 import { getGpuDeals, getCpuDeals, getLaptopDeals } from '@/lib/dealRadar';
+import { appConfig } from '@/lib/env';
+
+// All valid category slugs - sync with [category]/page.tsx CATEGORY_CONFIG
+const CATEGORY_SLUGS = [
+  'gpus', 'cpus', 'laptops', 'monitors',
+  'keyboards', 'mice', 'headsets',
+  'drops', 'new', 'bestsellers',
+  'webcams', 'speakers', 'gaming-laptops',
+  'prebuilt', 'chairs', 'streaming',
+] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://dxm369.com';
-  
+  const baseUrl = appConfig.siteUrl;
+
   // Static pages with high priority
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -15,24 +25,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/gpus`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/cpus`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/laptops`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
     },
     {
       url: `${baseUrl}/deals`,
@@ -53,6 +45,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
   ];
+
+  // Category pages - all categories get indexed
+  const categoryPages: MetadataRoute.Sitemap = CATEGORY_SLUGS.map((slug) => ({
+    url: `${baseUrl}/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'hourly' as const,
+    priority: 0.9,
+  }));
 
   // Dynamic product pages
   // Gracefully handle API failures - return static pages only if API unavailable
@@ -84,9 +84,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
     ];
 
-    return [...staticPages, ...productPages];
+    return [...staticPages, ...categoryPages, ...productPages];
   } catch (error) {
     console.error('Error generating sitemap:', error);
-    return staticPages;
+    return [...staticPages, ...categoryPages];
   }
 }

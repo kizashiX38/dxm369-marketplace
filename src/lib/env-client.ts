@@ -15,8 +15,11 @@
 export const publicConfig = {
   associateTag: process.env.NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG || 'dxm369-20',
   trackingBaseTag: process.env.NEXT_PUBLIC_TRACKING_BASE_TAG || 'dxm369',
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+  // Smart fallback: Vercel preview uses VERCEL_URL, local dev uses localhost
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
   environment: process.env.NEXT_PUBLIC_ENV || 'development',
   adminKey: process.env.NEXT_PUBLIC_ADMIN_KEY || '',
 } as const;

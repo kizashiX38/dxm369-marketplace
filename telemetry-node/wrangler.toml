@@ -1,0 +1,15 @@
+name = "dxm-telemetry-node"
+main = "src/index.ts"
+compatibility_date = "2024-11-20"
+
+[durable_objects]
+bindings = [
+  { name = "TELEMETRY_HUB", class_name = "TelemetryHub" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["TelemetryHub"]
+
+[vars]
+ALLOWED_ORIGIN = "https://dxm369.com"

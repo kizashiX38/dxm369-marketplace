@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     url: "/{SLUG}",
   },
   alternates: {
-    canonical: "https://dxm369.com/{SLUG}",
+    canonical: "${process.env.NEXT_PUBLIC_SITE_URL || 'https://dxm369.com'}/{SLUG}",
   },
 };
 

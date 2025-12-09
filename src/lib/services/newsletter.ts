@@ -11,8 +11,8 @@ export interface Subscriber {
   id: number;
   email: string;
   source?: string;
-  subscribedAt: Date;
-  unsubscribedAt?: Date;
+  subscribedAt: string;
+  unsubscribedAt?: string;
 }
 
 /**

@@ -29,8 +29,14 @@ export async function GET(req: NextRequest) {
       itemCount: Math.min(itemCount, 50), // Limit to 50 items max
     };
 
-    if (minPrice) options.minPrice = parseInt(minPrice) * 100; // Convert to cents
-    if (maxPrice) options.maxPrice = parseInt(maxPrice) * 100; // Convert to cents
+    if (minPrice) {
+      const minPriceNum = parseInt(minPrice, 10);
+      if (!isNaN(minPriceNum)) options.minPrice = minPriceNum * 100; // Convert to cents
+    }
+    if (maxPrice) {
+      const maxPriceNum = parseInt(maxPrice, 10);
+      if (!isNaN(maxPriceNum)) options.maxPrice = maxPriceNum * 100; // Convert to cents
+    }
     if (brand) options.brand = brand;
     if (sortBy) options.sortBy = sortBy;
 

@@ -5,12 +5,15 @@ import { DXMProductResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
 import { appConfig } from "@/lib/env";
 
+// ISR: Revalidate every hour for fresh deals while maintaining CDN caching
+export const revalidate = 3600;
+
 export default async function StorageCommandConsole() {
   try {
-    // Fetch from normalized API route (using GPUs as placeholder until SSD endpoint exists)
+    // Fetch from normalized API route - storage endpoint active
     const baseUrl = appConfig.baseUrl;
-    const response = await fetch(`${baseUrl}/api/dxm/products/gpus`, {
-      cache: 'no-store',
+    const response = await fetch(`${baseUrl}/api/dxm/products/storage`, {
+      next: { revalidate: 3600 },
       headers: {
         'Content-Type': 'application/json',
       },

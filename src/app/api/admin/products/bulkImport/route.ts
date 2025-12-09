@@ -4,6 +4,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bulkImportProducts } from "@/lib/services/adminProducts";
 import { apiSafe } from "@/lib/apiSafe";
+import { securityConfig } from "@/lib/env";
 
 function parseCSV(content: string): Array<{ asin: string; category: string; title?: string }> {
   const lines = content.trim().split("\n");
@@ -16,17 +17,31 @@ function parseCSV(content: string): Array<{ asin: string; category: string; titl
     throw new Error("CSV must have 'asin' and 'category' columns");
   }
 
-  return lines.slice(1).map(line => {
-    const cols = line.split(",").map(c => c.trim());
-    return {
-      asin: cols[asinIdx],
-      category: cols[categoryIdx],
-      title: titleIdx !== -1 ? cols[titleIdx] : undefined
-    };
-  });
+  const maxIdx = Math.max(asinIdx, categoryIdx, titleIdx !== -1 ? titleIdx : 0);
+  return lines.slice(1)
+    .filter(line => line.trim().length > 0)
+    .map((line, rowNum) => {
+      const cols = line.split(",").map(c => c.trim());
+      if (cols.length <= maxIdx) {
+        throw new Error(`Row ${rowNum + 2} has insufficient columns (expected at least ${maxIdx + 1}, got ${cols.length})`);
+      }
+      return {
+        asin: cols[asinIdx],
+        category: cols[categoryIdx],
+        title: titleIdx !== -1 ? cols[titleIdx] : undefined
+      };
+    });
 }
 
 export const POST = apiSafe(async (request: NextRequest) => {
+  // Verify admin access
+  const adminKey = request.headers.get("x-admin-key");
+  const secret = securityConfig.adminSecret;
+
+  if (!secret || adminKey !== secret) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
   const contentType = request.headers.get("content-type") || "";
   let products: Array<{ asin: string; category: string; title?: string }> = [];
 

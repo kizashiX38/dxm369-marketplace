@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CyberSidebar from "@/components/CyberSidebar";
+import TelemetryBeacon from "@/components/TelemetryBeacon";
 import { baseSEO, generateOrganizationStructuredData, generateWebsiteStructuredData } from "@/lib/seo";
 
 export const metadata: Metadata = baseSEO;
@@ -93,6 +94,7 @@ export default function RootLayout({
         </div>
 
         <Footer />
+        <TelemetryBeacon />
       </body>
     </html>
   );

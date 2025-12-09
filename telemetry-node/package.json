@@ -1,0 +1,15 @@
+{
+  "name": "dxm-telemetry-node",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --local --persist-to=./.wrangler-state/telemetry",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "typescript": "^5.3.0",
+    "wrangler": "^3.91.0"
+  }
+}
