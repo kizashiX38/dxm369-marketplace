@@ -20,8 +20,8 @@ interface MarketplaceProductRow {
   visible: boolean;
 }
 
-export const GET = apiSafe(async (request: NextRequest, props: { params: Promise<{ category: string }> }) => {
-  const params = await props.params;
+export const GET = apiSafe(async (request: NextRequest, context: any) => {
+  const params = await context.params;
   const category = params.category.toLowerCase();
 
   // Query marketplace products from marketplace_products table
@@ -34,10 +34,11 @@ export const GET = apiSafe(async (request: NextRequest, props: { params: Promise
   );
 
   // Map to DXM product format
-  const products: DXMProduct[] = raw.map(row => ({
+  const products = raw.map(row => ({
     id: `marketplace-${row.asin}`,
     asin: row.asin,
     title: row.title || `${category} Product`,
+    name: row.title || `${category} Product`,
     brand: row.title?.split(' ')[0] || 'Unknown',
     category: category,
     price: Number(row.price || 0),
@@ -46,8 +47,11 @@ export const GET = apiSafe(async (request: NextRequest, props: { params: Promise
     dxmScore: Number(row.rating || 7.0),
     imageUrl: row.image_url,
     availability: 'In Stock',
+    vendor: 'Amazon',
     affiliateLink: `https://amazon.com/dp/${row.asin}?tag=dxm369-20`,
     primeEligible: false,
+    specs: {},
+    lastUpdated: new Date().toISOString(),
   }));
 
   return NextResponse.json(products);
