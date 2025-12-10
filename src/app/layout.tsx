@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CyberSidebar from "@/components/CyberSidebar";
 import TelemetryBeacon from "@/components/TelemetryBeacon";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { baseSEO, generateOrganizationStructuredData, generateWebsiteStructuredData } from "@/lib/seo";
 
 export const metadata: Metadata = baseSEO;
@@ -95,6 +96,7 @@ export default function RootLayout({
 
         <Footer />
         <TelemetryBeacon />
+        <SpeedInsights />
       </body>
     </html>
   );
