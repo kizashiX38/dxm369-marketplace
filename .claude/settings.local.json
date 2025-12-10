@@ -108,7 +108,11 @@
       "Bash([ -f /tmp/ingest-final-response.txt ])",
       "Bash(if [ -f /tmp/ingest-final-response.txt ])",
       "Bash([ -s /tmp/ingest-final-response.txt ])",
-      "Bash(then echo \"=== INGESTION RESPONSE ===\" cat /tmp/ingest-final-response.txt)"
+      "Bash(then echo \"=== INGESTION RESPONSE ===\" cat /tmp/ingest-final-response.txt)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:kaggle.com)",
+      "WebFetch(domain:jmcauley.ucsd.edu)"
     ],
     "deny": [],
     "ask": []
