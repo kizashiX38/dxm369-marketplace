@@ -310,3 +310,5 @@ runAutonomousEngine().catch(err => {
   console.error('❌ Engine failed:', err);
   process.exit(1);
 });
+
+export {};

@@ -5,7 +5,7 @@
 import { DXMProductResponse } from "@/types/api";
 import { DealCard } from "@/components/DealCard";
 import { generateBreadcrumbStructuredData } from "@/lib/seo";
-import { appConfig } from "@/lib/env";
+import { getDealsByCategory } from "@/lib/dealRadar";
 import type { Metadata } from "next";
 
 // ISR: Revalidate every hour for fresh deals while maintaining CDN caching
@@ -30,33 +30,21 @@ export const metadata: Metadata = {
 };
 
 export default async function RTX4070vsRX7800XTPage() {
-  // Fetch from normalized API route
-  const baseUrl = appConfig.baseUrl;
-  const response = await fetch(`${baseUrl}/api/dxm/products/gpus`, {
-    next: { revalidate: 3600 },
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch GPU products: ${response.statusText}`);
-  }
-  
-  const allDeals: DXMProductResponse = await response.json();
-  
+  // Fetch directly from library to support static generation
+  const allDeals = await getDealsByCategory("gpu");
+
   // Find specific GPU deals
-  const rtx4070Deals = allDeals.filter(product => 
-    product.name.toLowerCase().includes('rtx 4070') && 
+  const rtx4070Deals = allDeals.filter(product =>
+    product.name.toLowerCase().includes('rtx 4070') &&
     !product.name.toLowerCase().includes('super') &&
     !product.name.toLowerCase().includes('ti')
   );
-  
-  const rx7800xtDeals = allDeals.filter(product => 
+
+  const rx7800xtDeals = allDeals.filter(product =>
     product.name.toLowerCase().includes('rx 7800 xt') ||
     product.name.toLowerCase().includes('7800 xt')
   );
-  
+
   // Generate breadcrumb structured data
   const breadcrumbData = generateBreadcrumbStructuredData([
     { name: "Home", url: "/" },
@@ -73,7 +61,7 @@ export default async function RTX4070vsRX7800XTPage() {
           __html: JSON.stringify(breadcrumbData),
         }}
       />
-      
+
       <div className="min-h-screen py-6 relative">
         <div className="max-w-6xl mx-auto px-4">
           {/* SEO-Optimized Header */}
@@ -88,7 +76,7 @@ export default async function RTX4070vsRX7800XTPage() {
               RTX 4070 <span className="text-cyan-400">vs</span> RX 7800 XT
             </h1>
             <p className="text-slate-400 font-mono leading-relaxed border-l-2 border-cyan-500/40 pl-4 max-w-4xl">
-              Comprehensive comparison of NVIDIA RTX 4070 vs AMD RX 7800 XT with DXM Value Scoring, 
+              Comprehensive comparison of NVIDIA RTX 4070 vs AMD RX 7800 XT with DXM Value Scoring,
               real-world gaming benchmarks, and current market pricing analysis for 1440p gaming.
             </p>
           </header>
@@ -145,7 +133,7 @@ export default async function RTX4070vsRX7800XTPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-white mb-6">Performance Analysis</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              
+
               {/* RTX 4070 Analysis */}
               <div className="glass-panel p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -154,7 +142,7 @@ export default async function RTX4070vsRX7800XTPage() {
                   </div>
                   <h3 className="text-lg font-bold text-white">NVIDIA RTX 4070</h3>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-cyan-400 font-semibold mb-2">Strengths</h4>
@@ -166,7 +154,7 @@ export default async function RTX4070vsRX7800XTPage() {
                       <li>• More mature drivers</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h4 className="text-rose-400 font-semibold mb-2">Weaknesses</h4>
                     <ul className="text-slate-300 text-sm space-y-1">
@@ -186,7 +174,7 @@ export default async function RTX4070vsRX7800XTPage() {
                   </div>
                   <h3 className="text-lg font-bold text-white">AMD RX 7800 XT</h3>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-cyan-400 font-semibold mb-2">Strengths</h4>
@@ -198,7 +186,7 @@ export default async function RTX4070vsRX7800XTPage() {
                       <li>• Future-proof VRAM buffer</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h4 className="text-rose-400 font-semibold mb-2">Weaknesses</h4>
                     <ul className="text-slate-300 text-sm space-y-1">
@@ -242,7 +230,7 @@ export default async function RTX4070vsRX7800XTPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="text-cyan-400 font-semibold mb-4">Ray Tracing Performance</h3>
                 <div className="space-y-3">
@@ -270,10 +258,10 @@ export default async function RTX4070vsRX7800XTPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="mt-6 p-4 bg-slate-800/30 rounded border border-slate-700/50">
               <p className="text-xs text-slate-400">
-                <strong>Note:</strong> Benchmarks represent average performance at 1440p Ultra settings. 
+                <strong>Note:</strong> Benchmarks represent average performance at 1440p Ultra settings.
                 RTX 4070 with DLSS Quality, RX 7800 XT with FSR Quality when available.
               </p>
             </div>
@@ -282,7 +270,7 @@ export default async function RTX4070vsRX7800XTPage() {
           {/* Current Deals */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-white mb-6">Current Deals & Pricing</h2>
-            
+
             {/* RTX 4070 Deals */}
             {rtx4070Deals.length > 0 && (
               <div className="mb-8">
@@ -311,7 +299,7 @@ export default async function RTX4070vsRX7800XTPage() {
           {/* Final Verdict */}
           <section className="glass-hero p-8 mb-8">
             <h2 className="text-2xl font-bold text-white mb-6 text-center">The Verdict: Which GPU Should You Buy?</h2>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="glass-panel p-6">
                 <h3 className="text-emerald-400 font-bold text-lg mb-4">Choose RTX 4070 If:</h3>
@@ -323,7 +311,7 @@ export default async function RTX4070vsRX7800XTPage() {
                   <li>• You prefer NVIDIA&apos;s software ecosystem</li>
                 </ul>
               </div>
-              
+
               <div className="glass-panel p-6">
                 <h3 className="text-rose-400 font-bold text-lg mb-4">Choose RX 7800 XT If:</h3>
                 <ul className="text-slate-300 space-y-2">
@@ -335,21 +323,21 @@ export default async function RTX4070vsRX7800XTPage() {
                 </ul>
               </div>
             </div>
-            
+
             <div className="text-center mt-8">
               <p className="text-slate-300 mb-4">
-                <strong>DXM Recommendation:</strong> Both are excellent 1440p gaming GPUs. 
+                <strong>DXM Recommendation:</strong> Both are excellent 1440p gaming GPUs.
                 RTX 4070 for ray tracing enthusiasts, RX 7800 XT for value-conscious gamers.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <a 
-                  href="/gpus" 
+                <a
+                  href="/gpus"
                   className="glass-panel px-6 py-3 text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
                 >
                   Compare All GPUs →
                 </a>
-                <a 
-                  href="/best-gpu-deals" 
+                <a
+                  href="/best-gpu-deals"
                   className="glass-panel-secondary px-6 py-3 text-slate-300 hover:text-white font-semibold transition-colors"
                 >
                   Best GPU Deals

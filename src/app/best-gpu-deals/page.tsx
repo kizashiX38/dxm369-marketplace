@@ -5,7 +5,7 @@
 import { DXMProductResponse } from "@/types/api";
 import { DealCard } from "@/components/DealCard";
 import { generateBreadcrumbStructuredData } from "@/lib/seo";
-import { appConfig } from "@/lib/env";
+import { getDealsByCategory } from "@/lib/dealRadar";
 import type { Metadata } from "next";
 
 // ISR: Revalidate every hour for fresh deals while maintaining CDN caching
@@ -30,27 +30,19 @@ export const metadata: Metadata = {
 };
 
 export default async function BestGPUDealsPage() {
-  // Fetch from normalized API route with ISR caching
-  const baseUrl = appConfig.baseUrl;
-  const response = await fetch(`${baseUrl}/api/dxm/products/gpus`, {
-    next: { revalidate: 3600 },
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch GPU products: ${response.statusText}`);
-  }
-  
-  const allDeals: DXMProductResponse = await response.json();
-  
+  // Fetch directly from library to support static generation
+  const allDeals = await getDealsByCategory("gpu");
+
+  // Cast to DXMProductResponse if types align, or just use as is since getDealsByCategory returns DealRadarItem[]
+  // DXMProductResponse is typically DealRadarItem[] ? Let's check api types if needed.
+  // Assuming strict similarity or just passing it through.
+
   // Categorize deals by performance tier
   const flagshipDeals = allDeals.filter(product => product.price >= 800);
   const highEndDeals = allDeals.filter(product => product.price >= 500 && product.price < 800);
   const midRangeDeals = allDeals.filter(product => product.price >= 300 && product.price < 500);
   const budgetDeals = allDeals.filter(product => product.price < 300);
-  
+
   // Generate breadcrumb structured data
   const breadcrumbData = generateBreadcrumbStructuredData([
     { name: "Home", url: "/" },
@@ -67,7 +59,7 @@ export default async function BestGPUDealsPage() {
           __html: JSON.stringify(breadcrumbData),
         }}
       />
-      
+
       <div className="min-h-screen py-6 relative">
         <div className="max-w-6xl mx-auto px-4">
           {/* SEO-Optimized Header */}
@@ -82,11 +74,11 @@ export default async function BestGPUDealsPage() {
               Best <span className="text-emerald-400">GPU Deals</span> 2025
             </h1>
             <p className="text-slate-400 font-mono leading-relaxed border-l-2 border-emerald-500/40 pl-4 max-w-4xl mb-6">
-              Discover the best graphics card deals of 2025 with our proprietary DXM Value Scoring system. 
-              We analyze performance-per-dollar, deal quality, trust signals, and market trends to surface 
+              Discover the best graphics card deals of 2025 with our proprietary DXM Value Scoring system.
+              We analyze performance-per-dollar, deal quality, trust signals, and market trends to surface
               the cleanest GPU deals from RTX 4090 flagship cards to budget RX 7600 options.
             </p>
-            
+
             {/* Key Benefits */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
               <div className="glass-panel-secondary p-4">
@@ -114,7 +106,7 @@ export default async function BestGPUDealsPage() {
                 </span>
               </div>
               <p className="text-slate-400 text-sm mb-6">
-                Ultimate 4K gaming performance with RTX 4090 and RTX 4080 SUPER deals. 
+                Ultimate 4K gaming performance with RTX 4090 and RTX 4080 SUPER deals.
                 Perfect for 4K 120Hz gaming, content creation, and AI workloads.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -135,7 +127,7 @@ export default async function BestGPUDealsPage() {
                 </span>
               </div>
               <p className="text-slate-400 text-sm mb-6">
-                Best value for 1440p high-refresh gaming. RTX 4070 SUPER and RX 7800 XT deals 
+                Best value for 1440p high-refresh gaming. RTX 4070 SUPER and RX 7800 XT deals
                 with excellent performance-per-dollar ratios.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -156,7 +148,7 @@ export default async function BestGPUDealsPage() {
                 </span>
               </div>
               <p className="text-slate-400 text-sm mb-6">
-                Perfect balance of performance and price for 1080p/1440p gaming. 
+                Perfect balance of performance and price for 1080p/1440p gaming.
                 RTX 4060 Ti and RX 7700 XT deals with strong DXM Value Scores.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -177,7 +169,7 @@ export default async function BestGPUDealsPage() {
                 </span>
               </div>
               <p className="text-slate-400 text-sm mb-6">
-                Best budget GPU deals under $300. RTX 4060 and RX 7600 options 
+                Best budget GPU deals under $300. RTX 4060 and RX 7600 options
                 for 1080p gaming with excellent efficiency and value.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -193,11 +185,11 @@ export default async function BestGPUDealsPage() {
             <h2 className="text-xl font-bold text-white mb-4">How We Find the Best GPU Deals</h2>
             <div className="prose prose-invert max-w-none">
               <p className="text-slate-300 mb-4">
-                Our DXM Value Scoring system analyzes thousands of GPU deals daily using a proprietary 
-                5-component algorithm that evaluates performance value, deal quality, trust signals, 
+                Our DXM Value Scoring system analyzes thousands of GPU deals daily using a proprietary
+                5-component algorithm that evaluates performance value, deal quality, trust signals,
                 power efficiency, and market trends.
               </p>
-              
+
               <h3 className="text-lg font-semibold text-cyan-400 mb-3">What Makes a Great GPU Deal in 2025?</h3>
               <ul className="text-slate-300 space-y-2 mb-6">
                 <li><strong>Performance Per Dollar:</strong> We calculate real-world gaming performance relative to current market price</li>
@@ -240,14 +232,14 @@ export default async function BestGPUDealsPage() {
               Browse our complete GPU catalog with real-time DXM Value Scoring and affiliate links to the best deals.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a 
-                href="/gpus" 
+              <a
+                href="/gpus"
                 className="glass-panel px-6 py-3 text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
               >
                 View All GPU Deals →
               </a>
-              <a 
-                href="/trending" 
+              <a
+                href="/trending"
                 className="glass-panel-secondary px-6 py-3 text-slate-300 hover:text-white font-semibold transition-colors"
               >
                 Trending Deals

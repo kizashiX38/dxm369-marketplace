@@ -5,7 +5,7 @@
 import { DXMProductResponse } from "@/types/api";
 import { DealCard } from "@/components/DealCard";
 import { generateBreadcrumbStructuredData } from "@/lib/seo";
-import { appConfig } from "@/lib/env";
+import { getDealsByCategory } from "@/lib/dealRadar";
 import type { Metadata } from "next";
 
 // ISR: Revalidate every hour for fresh deals while maintaining CDN caching
@@ -30,36 +30,24 @@ export const metadata: Metadata = {
 };
 
 export default async function BestLaptopDealsPage() {
-  // Fetch from normalized API route with ISR caching
-  const baseUrl = appConfig.baseUrl;
-  const response = await fetch(`${baseUrl}/api/dxm/products/laptops`, {
-    next: { revalidate: 3600 },
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch laptop products: ${response.statusText}`);
-  }
-  
-  const allDeals: DXMProductResponse = await response.json();
-  
+  // Fetch directly from library to support static generation
+  const allDeals = await getDealsByCategory("laptop");
+
   // Categorize deals by type
-  const gamingDeals = allDeals.filter(product => 
-    product.name.toLowerCase().includes('gaming') || 
+  const gamingDeals = allDeals.filter(product =>
+    product.name.toLowerCase().includes('gaming') ||
     product.name.toLowerCase().includes('rog')
   );
-  
-  const businessDeals = allDeals.filter(product => 
-    product.name.toLowerCase().includes('business') || 
+
+  const businessDeals = allDeals.filter(product =>
+    product.name.toLowerCase().includes('business') ||
     product.name.toLowerCase().includes('pro') ||
     product.name.toLowerCase().includes('macbook')
   );
-  
+
   const budgetDeals = allDeals.filter(product => product.price < 1000);
   const premiumDeals = allDeals.filter(product => product.price >= 1500);
-  
+
   // Generate breadcrumb structured data
   const breadcrumbData = generateBreadcrumbStructuredData([
     { name: "Home", url: "/" },
@@ -76,7 +64,7 @@ export default async function BestLaptopDealsPage() {
           __html: JSON.stringify(breadcrumbData),
         }}
       />
-      
+
       <div className="min-h-screen py-6 relative">
         <div className="max-w-6xl mx-auto px-4">
           {/* SEO-Optimized Header */}
@@ -91,11 +79,11 @@ export default async function BestLaptopDealsPage() {
               Best <span className="text-cyan-400">Laptop Deals</span> 2025
             </h1>
             <p className="text-slate-400 font-mono leading-relaxed border-l-2 border-cyan-500/40 pl-4 max-w-4xl mb-6">
-              Discover the best laptop deals of 2025 with our proprietary DXM Value Scoring system. 
-              We analyze performance-per-dollar, build quality, display quality, and market trends to surface 
+              Discover the best laptop deals of 2025 with our proprietary DXM Value Scoring system.
+              We analyze performance-per-dollar, build quality, display quality, and market trends to surface
               the cleanest laptop deals from RTX 4070 gaming laptops to M3 Pro MacBooks.
             </p>
-            
+
             {/* Key Benefits */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
               <div className="glass-panel-secondary p-4">
@@ -123,7 +111,7 @@ export default async function BestLaptopDealsPage() {
                 </span>
               </div>
               <p className="text-slate-400 text-sm mb-6">
-                High-performance gaming laptops with RTX GPUs, high-refresh displays, and RGB keyboards. 
+                High-performance gaming laptops with RTX GPUs, high-refresh displays, and RGB keyboards.
                 Perfect for 1440p and 1080p high-refresh gaming.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -144,7 +132,7 @@ export default async function BestLaptopDealsPage() {
                 </span>
               </div>
               <p className="text-slate-400 text-sm mb-6">
-                Professional laptops for content creation, business, and productivity. 
+                Professional laptops for content creation, business, and productivity.
                 MacBook Pro M3, ThinkPad, and premium ultrabook options.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -200,10 +188,10 @@ export default async function BestLaptopDealsPage() {
             <h2 className="text-xl font-bold text-white mb-4">How We Find the Best Laptop Deals</h2>
             <div className="prose prose-invert max-w-none">
               <p className="text-slate-300 mb-4">
-                Our DXM Value Scoring system analyzes laptop deals using a proprietary algorithm 
+                Our DXM Value Scoring system analyzes laptop deals using a proprietary algorithm
                 that evaluates CPU/GPU performance, display quality, build quality, and market trends.
               </p>
-              
+
               <h3 className="text-lg font-semibold text-cyan-400 mb-3">What Makes a Great Laptop Deal in 2025?</h3>
               <ul className="text-slate-300 space-y-2 mb-6">
                 <li><strong>Performance Per Dollar:</strong> CPU/GPU performance relative to current market price</li>
@@ -262,14 +250,14 @@ export default async function BestLaptopDealsPage() {
               Browse our complete laptop catalog with real-time DXM Value Scoring and affiliate links to the best deals.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a 
-                href="/laptops" 
+              <a
+                href="/laptops"
                 className="glass-panel px-6 py-3 text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
               >
                 View All Laptops →
               </a>
-              <a 
-                href="/trending" 
+              <a
+                href="/trending"
                 className="glass-panel-secondary px-6 py-3 text-slate-300 hover:text-white font-semibold transition-colors"
               >
                 Trending Deals
