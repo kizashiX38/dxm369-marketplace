@@ -100,7 +100,15 @@
       "Bash(ADMIN_SECRET=\"ak3693\" NEXT_PUBLIC_SITE_URL=\"https://www.dxm369.com\" npx ts-node:*)",
       "Bash(ADMIN_SECRET=\"ak3693\" NEXT_PUBLIC_SITE_URL=\"http://localhost:3001\" npx ts-node:*)",
       "Bash(ADMIN_SECRET=\"ak3693\" NEXT_PUBLIC_SITE_URL=\"http://localhost:3000\" TARGET_ASINS=1200 npx ts-node:*)",
-      "Bash(ADMIN_SECRET=\"ak3693\" npx ts-node:*)"
+      "Bash(ADMIN_SECRET=\"ak3693\" npx ts-node:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(timeout 30 curl:*)",
+      "Bash([ -s /tmp/ingest-response.txt ])",
+      "Bash(NEXT_PUBLIC_SITE_URL=\"http://localhost:3000\" npx ts-node:*)",
+      "Bash([ -f /tmp/ingest-final-response.txt ])",
+      "Bash(if [ -f /tmp/ingest-final-response.txt ])",
+      "Bash([ -s /tmp/ingest-final-response.txt ])",
+      "Bash(then echo \"=== INGESTION RESPONSE ===\" cat /tmp/ingest-final-response.txt)"
     ],
     "deny": [],
     "ask": []
