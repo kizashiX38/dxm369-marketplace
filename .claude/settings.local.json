@@ -96,7 +96,11 @@
       "Bash(timeout 120 curl:*)",
       "Bash(npx playwright:*)",
       "Bash(ADMIN_SECRET=\"test-admin-key\" NEXT_PUBLIC_SITE_URL=\"http://localhost:3000\" npx ts-node:*)",
-      "Bash(ADMIN_SECRET=\"ak3693\" NEXT_PUBLIC_SITE_URL=\"http://localhost:3000\" npx ts-node:*)"
+      "Bash(ADMIN_SECRET=\"ak3693\" NEXT_PUBLIC_SITE_URL=\"http://localhost:3000\" npx ts-node:*)",
+      "Bash(ADMIN_SECRET=\"ak3693\" NEXT_PUBLIC_SITE_URL=\"https://www.dxm369.com\" npx ts-node:*)",
+      "Bash(ADMIN_SECRET=\"ak3693\" NEXT_PUBLIC_SITE_URL=\"http://localhost:3001\" npx ts-node:*)",
+      "Bash(ADMIN_SECRET=\"ak3693\" NEXT_PUBLIC_SITE_URL=\"http://localhost:3000\" TARGET_ASINS=1200 npx ts-node:*)",
+      "Bash(ADMIN_SECRET=\"ak3693\" npx ts-node:*)"
     ],
     "deny": [],
     "ask": []
