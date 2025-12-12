@@ -2,10 +2,10 @@
 // SEO-Optimized GPU Comparison Page
 // Target: "RTX 4070 vs RX 7800 XT" high-traffic keyword
 
-import { DXMProductResponse } from "@/types/api";
+import { DXMProduct } from "@/lib/types/product";
 import { DealCard } from "@/components/DealCard";
 import { generateBreadcrumbStructuredData } from "@/lib/seo";
-import { getDealsByCategory } from "@/lib/dealRadar";
+import { getDealsByCategory, calculateSavingsPercent } from "@/lib/dealRadar";
 import type { Metadata } from "next";
 
 // ISR: Revalidate every hour for fresh deals while maintaining CDN caching
@@ -31,7 +31,30 @@ export const metadata: Metadata = {
 
 export default async function RTX4070vsRX7800XTPage() {
   // Fetch directly from library to support static generation
-  const allDeals = await getDealsByCategory("gpu");
+  const rawDeals = await getDealsByCategory("gpu");
+
+  // Map DealRadarItem to DXMProduct
+  const allDeals: DXMProduct[] = rawDeals.map(deal => ({
+    id: deal.id,
+    asin: deal.asin,
+    name: deal.title,
+    category: "GPU",
+    price: deal.price,
+    originalPrice: deal.previousPrice,
+    savingsPercent: calculateSavingsPercent(deal) ?? undefined,
+    dxmScore: deal.dxmScore,
+    vendor: deal.vendor || "Amazon",
+    isPrime: deal.primeEligible,
+    specs: {
+      vram: deal.vram || "",
+      tdp: deal.tdp || "",
+      boostClock: deal.boostClock || "",
+      baseClock: deal.baseClock || "",
+    },
+    imageUrl: deal.imageUrl,
+    availability: deal.availability === "In Stock" ? "in_stock" : "out_of_stock",
+    lastUpdated: new Date().toISOString(),
+  }));
 
   // Find specific GPU deals
   const rtx4070Deals = allDeals.filter(product =>
