@@ -51,12 +51,9 @@ export function buildAmazonProductUrl(
   // Always use the valid Amazon Associate Tag
   // NOTE: Category-specific tags like dxm369-gpus-20 don't exist in Amazon account
   // Only dxm369-20 is valid and active
-  let trackingId: string;
-  if (options.trackingId) {
-    trackingId = options.trackingId;
-  } else {
-    trackingId = AMAZON_ASSOCIATE_TAG; // Always use dxm369-20
-  }
+  const trackingId =
+    options.trackingId ||
+    (options.context ? getTrackingId(options.context) : AMAZON_ASSOCIATE_TAG);
 
   // Always attach affiliate tag
   base.searchParams.set("tag", trackingId);
@@ -95,4 +92,3 @@ export function extractASINFromUrl(url: string): string | null {
   const match = url.match(/\/dp\/([A-Z0-9]{10})/i);
   return match ? match[1] : null;
 }
-

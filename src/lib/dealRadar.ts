@@ -21,9 +21,28 @@ import seedDataJson from "../../data/asin-seed.json";
 import { getProductsByCategory, getAllProducts } from "@/lib/services/adminProducts";
 import { queryAll } from "@/lib/db";
 
+// Deterministic fallback rating generator (stable per ASIN)
+function stable01(seed: string): number {
+  let hash = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    hash = Math.imul(hash ^ seed.charCodeAt(i), 16777619);
+  }
+  return ((hash >>> 0) % 10000) / 10000;
+}
+
+function getDeterministicRating(asin: string): { rating: number; ratingCount: number } {
+  const safeSeed = asin || "DXM369";
+  const base = stable01(safeSeed);
+  const countSeed = stable01(`${safeSeed}:count`);
+  const rating = Math.round((3.5 + base * 1.5) * 100) / 100; // 3.5–5.0
+  const ratingCount = Math.floor(50 + countSeed * 500); // 50–550
+  return { rating, ratingCount };
+}
+
 // Calculate real DXM scores with v2 precision and category-specific logic
 export function calculateRealDXMScoreV2(deal: Partial<DealRadarItem>): number {
   const category = deal.category || "gpu";
+  const { rating, ratingCount } = getDeterministicRating(deal.asin || deal.id || "DXM369");
   
   // Category-specific scoring with v2 precision
   switch (category) {
@@ -34,8 +53,8 @@ export function calculateRealDXMScoreV2(deal: Partial<DealRadarItem>): number {
         brand: deal.brand || "unknown",
         currentPrice: deal.price || 0,
         msrpPrice: deal.previousPrice || deal.price,
-        amazonRating: generateRealisticRating(),
-        ratingCount: generateRealisticRatingCount(),
+        amazonRating: rating,
+        ratingCount,
         inStock: deal.availability === "In Stock",
         priceHistory: deal.trend || []
       });
@@ -47,8 +66,8 @@ export function calculateRealDXMScoreV2(deal: Partial<DealRadarItem>): number {
         brand: deal.brand || "unknown",
         currentPrice: deal.price || 0,
         msrpPrice: deal.previousPrice || deal.price,
-        amazonRating: generateRealisticRating(),
-        ratingCount: generateRealisticRatingCount(),
+        amazonRating: rating,
+        ratingCount,
         inStock: deal.availability === "In Stock",
         priceHistory: deal.trend || []
       });
@@ -60,8 +79,8 @@ export function calculateRealDXMScoreV2(deal: Partial<DealRadarItem>): number {
         brand: deal.brand || "unknown",
         currentPrice: deal.price || 0,
         msrpPrice: deal.previousPrice || deal.price,
-        amazonRating: generateRealisticRating(),
-        ratingCount: generateRealisticRatingCount(),
+        amazonRating: rating,
+        ratingCount,
         inStock: deal.availability === "In Stock",
         priceHistory: deal.trend || []
       });
@@ -78,8 +97,8 @@ export function calculateRealDXMScoreV2(deal: Partial<DealRadarItem>): number {
         msrpPrice: deal.previousPrice || deal.price,
         perfIndex: 50.0, // neutral default
         tdpWatts: extractTDP(deal.tdp),
-        amazonRating: generateRealisticRating(),
-        ratingCount: generateRealisticRatingCount(),
+        amazonRating: rating,
+        ratingCount,
         inStock: deal.availability === "In Stock",
         priceHistory: deal.trend || []
       };
@@ -99,33 +118,6 @@ function extractTDP(tdpString?: string): number {
   if (!tdpString) return 150; // default
   const match = tdpString.match(/(\d+)W/);
   return match ? parseInt(match[1]) : 150;
-}
-
-function generateRealisticRating(): number {
-  // Generate ratings with realistic distribution (most products 4.0-4.8)
-  return Math.round((4.0 + Math.random() * 0.8) * 100) / 100;
-}
-
-function generateRealisticRatingCount(): number {
-  // Generate realistic review counts with weighted distribution
-  const weights = [
-    { min: 50, max: 200, weight: 0.3 },    // Low review count
-    { min: 200, max: 1000, weight: 0.4 },  // Medium review count
-    { min: 1000, max: 5000, weight: 0.25 }, // High review count
-    { min: 5000, max: 15000, weight: 0.05 } // Very high review count
-  ];
-  
-  const random = Math.random();
-  let cumulative = 0;
-  
-  for (const range of weights) {
-    cumulative += range.weight;
-    if (random <= cumulative) {
-      return Math.floor(Math.random() * (range.max - range.min) + range.min);
-    }
-  }
-  
-  return 500; // fallback
 }
 
 // REAL DATA MODE: ASIN lists for real Amazon API fetching
