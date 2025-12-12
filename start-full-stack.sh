@@ -27,7 +27,7 @@ fi
 
 # Get script directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BRIDGE_DIR="$SCRIPT_DIR/DXM_ASIN_Console"
+BRIDGE_DIR="$SCRIPT_DIR/../../DXM_ASIN_Console"
 
 echo -e "${YELLOW}1. Starting Python ASIN Bridge Server...${NC}"
 cd "$BRIDGE_DIR"

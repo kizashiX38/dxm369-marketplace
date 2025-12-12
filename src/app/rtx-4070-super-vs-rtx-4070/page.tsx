@@ -1,9 +1,12 @@
+// src/app/rtx-4070-super-vs-rtx-4070/page.tsx
+// SEO-Optimized GPU Comparison Page
+
 import { Metadata } from "next";
 import { generateComparisonPageData, COMPARISON_TEMPLATES } from "@/lib/comparisonPageGenerator";
 
 export const revalidate = 3600;
 
-const comparisonConfig = COMPARISON_TEMPLATES.rtx4070_vs_rx7800xt;
+const comparisonConfig = COMPARISON_TEMPLATES.rtx4070Super_vs_4070;
 const pageData = generateComparisonPageData(comparisonConfig);
 
 export const metadata: Metadata = pageData.metadata;
@@ -42,10 +45,10 @@ export default async function ComparisonPage() {
               </span>
             </div>
             <h1 className="text-4xl font-bold text-white mb-4 uppercase tracking-tight">
-              {pageData.config.productA} <span className="text-cyan-400">vs</span> {pageData.config.productB}
+              RTX 4070 Super <span className="text-cyan-400">vs</span> RTX 4070
             </h1>
             <p className="text-lg text-slate-300 mb-6">
-              {pageData.config.winnerReason}
+              Which NVIDIA GPU offers better value? DXM Value Scoring analysis with performance benchmarks and current deals.
             </p>
 
             <div className="flex gap-4 mt-6">
@@ -65,8 +68,8 @@ export default async function ComparisonPage() {
               <thead>
                 <tr className="border-b border-slate-700">
                   <th className="text-left py-3 px-4 text-slate-400 font-mono uppercase text-xs">Spec</th>
-                  <th className="text-left py-3 px-4 text-cyan-300 font-bold">{pageData.config.productA}</th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-bold">{pageData.config.productB}</th>
+                  <th className="text-left py-3 px-4 text-cyan-300 font-bold">RTX 4070 Super</th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-bold">RTX 4070</th>
                 </tr>
               </thead>
               <tbody>

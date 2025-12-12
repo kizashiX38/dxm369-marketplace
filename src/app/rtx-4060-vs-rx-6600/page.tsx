@@ -3,7 +3,7 @@ import { generateComparisonPageData, COMPARISON_TEMPLATES } from "@/lib/comparis
 
 export const revalidate = 3600;
 
-const comparisonConfig = COMPARISON_TEMPLATES.rtx4070_vs_rx7800xt;
+const comparisonConfig = COMPARISON_TEMPLATES.rtx4060_vs_rx6600;
 const pageData = generateComparisonPageData(comparisonConfig);
 
 export const metadata: Metadata = pageData.metadata;

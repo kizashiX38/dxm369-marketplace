@@ -4,8 +4,11 @@
 import { Metadata } from "next";
 import { DXMProductResponse, extractProductsFromResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
+import { BuyingGuideSection } from "@/components/BuyingGuideSection";
 import { appConfig } from "@/lib/env";
 import { generateCategorySEO, generateBreadcrumbStructuredData } from "@/lib/seo";
+import { BUYING_GUIDE_TEMPLATES } from "@/lib/buyingGuideGenerator";
+import { generateCategoryPageSchemas, generateAggregateOfferSchema } from "@/lib/schemaGenerator";
 import Link from "next/link";
 
 // ISR: Revalidate every hour for fresh deals while maintaining CDN caching
@@ -94,9 +97,26 @@ export default async function MemoryCommandConsole() {
       ]
     };
 
+    // Path A Schema (High-Velocity): ProductCollection + AggregateOffer
+    const categorySchemas = generateCategoryPageSchemas("ram", deals.length);
+    const aggregateOfferSchema = generateAggregateOfferSchema({
+      bestOverall,
+      bestValue,
+      bestBudget,
+      bestHighEnd
+    });
+
     return (
       <div className="min-h-screen bg-slate-950 tactical-grid">
         {/* Structured Data */}
+        {/* Path A Schema: ProductCollection + AggregateOffer */}
+        {categorySchemas.map((schema, idx) => (
+          <script key={`category-schema-${idx}`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        ))}
+        {Object.keys(aggregateOfferSchema).length > 0 && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateOfferSchema) }} />
+        )}
+        {/* Existing Schema */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
         {/* Command Header */}
@@ -233,6 +253,11 @@ export default async function MemoryCommandConsole() {
                 <p className="text-slate-400 font-mono">No memory modules currently available. Check back soon.</p>
               </div>
             )}
+          </div>
+
+          {/* Buying Guide Section */}
+          <div className="mb-8">
+            <BuyingGuideSection guide={BUYING_GUIDE_TEMPLATES.ram} />
           </div>
         </div>
       </div>

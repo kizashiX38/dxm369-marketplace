@@ -112,7 +112,9 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:kaggle.com)",
-      "WebFetch(domain:jmcauley.ucsd.edu)"
+      "WebFetch(domain:jmcauley.ucsd.edu)",
+      "Bash(__NEW_LINE__ echo \"=== Comparison Pages Created ===\" ls -1 src/app/)",
+      "Bash(for file in /home/dxm/Documents/Cursor_Dev/Project_DXM369_Marketplace/src/lib/comparisons/*.ts)"
     ],
     "deny": [],
     "ask": []

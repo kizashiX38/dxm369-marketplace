@@ -1,0 +1,11 @@
+.next/cache
+.next/.env.local*
+.next/.env.production*
+node_modules/.cache
+node_modules/.bin
+.git
+.gitignore
+README.md
+*.md
+.env.local
+.env.*.local

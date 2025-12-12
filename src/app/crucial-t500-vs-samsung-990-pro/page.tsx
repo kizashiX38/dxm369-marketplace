@@ -3,7 +3,7 @@ import { generateComparisonPageData, COMPARISON_TEMPLATES } from "@/lib/comparis
 
 export const revalidate = 3600;
 
-const comparisonConfig = COMPARISON_TEMPLATES.rtx4070_vs_rx7800xt;
+const comparisonConfig = COMPARISON_TEMPLATES.crucial_t500_vs_samsung990pro;
 const pageData = generateComparisonPageData(comparisonConfig);
 
 export const metadata: Metadata = pageData.metadata;
@@ -38,7 +38,7 @@ export default async function ComparisonPage() {
             <div className="flex items-center gap-3 mb-4">
               <div className="h-2 w-2 bg-cyan-400 animate-neon-pulse shadow-[0_0_12px_cyan]" />
               <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-cyan-400 font-bold">
-                GPU Comparison 2025
+                SSD Comparison 2025
               </span>
             </div>
             <h1 className="text-4xl font-bold text-white mb-4 uppercase tracking-tight">
@@ -52,8 +52,8 @@ export default async function ComparisonPage() {
               <a href="#comparison" className="px-6 py-3 bg-cyan-400/20 border border-cyan-400/50 rounded hover:bg-cyan-400/30 text-white font-mono text-sm">
                 View Comparison
               </a>
-              <a href="/gpus" className="px-6 py-3 bg-slate-700/50 border border-slate-600 rounded hover:bg-slate-700/70 text-white font-mono text-sm">
-                All GPUs
+              <a href="/storage" className="px-6 py-3 bg-slate-700/50 border border-slate-600 rounded hover:bg-slate-700/70 text-white font-mono text-sm">
+                All SSDs
               </a>
             </div>
           </header>
@@ -98,13 +98,13 @@ export default async function ComparisonPage() {
           <section className="glass-panel rounded-xl p-8 border border-slate-700/50">
             <h2 className="text-2xl font-bold text-white mb-6">Explore More</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <a href="/gpus" className="p-4 bg-slate-800/50 rounded hover:bg-slate-800/70 transition">
-                <h4 className="font-bold text-white mb-2">→ All GPU Deals</h4>
-                <p className="text-slate-400 text-sm">Browse complete GPU lineup</p>
+              <a href="/storage" className="p-4 bg-slate-800/50 rounded hover:bg-slate-800/70 transition">
+                <h4 className="font-bold text-white mb-2">→ All SSD Deals</h4>
+                <p className="text-slate-400 text-sm">Browse complete SSD lineup</p>
               </a>
               <a href="/builds" className="p-4 bg-slate-800/50 rounded hover:bg-slate-800/70 transition">
                 <h4 className="font-bold text-white mb-2">→ PC Builds</h4>
-                <p className="text-slate-400 text-sm">See GPU + CPU combos</p>
+                <p className="text-slate-400 text-sm">See full system configs</p>
               </a>
             </div>
           </section>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -38,6 +39,23 @@ export default function RootLayout({
         <link rel="preconnect" href="https://images-na.ssl-images-amazon.com" />
         {/* Canonical URL */}
         <link rel="canonical" href="https://dxm369.com" />
+
+        {/* Google Analytics 4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-72G7F193J8"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-72G7F193J8', {
+              anonymize_ip: true,
+              send_page_view: true
+            });
+          `}
+        </Script>
       </head>
       <body className="min-h-screen flex flex-col bg-[#080c12] text-slate-200 relative">
         {/* Enhanced ambient background layers */}
