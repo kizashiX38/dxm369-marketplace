@@ -1,12 +1,17 @@
 // DXM369 Storage Command Console - Hardware Intelligence Terminal
 // Tactical SSD/Storage evaluation matrix
 
+import { Metadata } from "next";
 import { DXMProductResponse, extractProductsFromResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
 import { appConfig } from "@/lib/env";
+import { generateCategorySEO, generateBreadcrumbStructuredData } from "@/lib/seo";
+import Link from "next/link";
 
 // ISR: Revalidate every hour for fresh deals while maintaining CDN caching
 export const revalidate = 3600;
+
+export const metadata: Metadata = generateCategorySEO("ssd");
 
 export default async function StorageCommandConsole() {
   try {
@@ -26,8 +31,74 @@ export default async function StorageCommandConsole() {
     const dealsPayload: DXMProductResponse = await response.json();
     const deals = extractProductsFromResponse(dealsPayload);
 
+    const dealsByScore = [...deals].sort((a, b) => b.dxmScore - a.dxmScore);
+    const bestOverall = dealsByScore[0];
+    const bestValue = [...deals]
+      .filter((d) => d.price > 0)
+      .sort((a, b) => (b.dxmScore / b.price) - (a.dxmScore / a.price))[0];
+    const bestBudget = [...deals]
+      .filter((d) => d.price > 0 && d.price <= 100)
+      .sort((a, b) => b.dxmScore - a.dxmScore)[0];
+    const bestHighEnd = [...deals]
+      .filter((d) => d.price >= 250)
+      .sort((a, b) => b.dxmScore - a.dxmScore)[0];
+
+    const picks = [
+      { label: "DXM Best Overall", deal: bestOverall, source: "seo-pick-overall" },
+      { label: "DXM Best Value", deal: bestValue, source: "seo-pick-value" },
+      { label: "DXM Best Budget", deal: bestBudget, source: "seo-pick-budget" },
+      { label: "DXM High-End Pick", deal: bestHighEnd, source: "seo-pick-highend" },
+    ].filter((p): p is { label: string; deal: NonNullable<typeof p.deal>; source: string } => Boolean(p.deal));
+
+    const breadcrumbData = generateBreadcrumbStructuredData([
+      { name: "Home", url: "/" },
+      { name: "Storage", url: "/storage" }
+    ]);
+
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What SSD speed do I need for gaming?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "NVMe SSDs with 3,500+ MB/s read speeds are ideal for gaming in 2025. PCIe 4.0 drives offer excellent performance; PCIe 5.0 provides future-proofing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much storage do I need for gaming?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "1TB minimum for OS + games. 2TB recommended for a solid game library. High-demand gamers prefer 4TB+ for multiple AAA titles."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "NVMe vs SATA SSD: Which should I choose?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "NVMe is faster and now standard. Choose NVMe for new builds. SATA SSDs are budget-friendly but slower. Both work fine for gaming and everyday use."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the DXM Value Score?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DXM Score evaluates storage on performance value, deal quality, trust signals, efficiency, and market trends. Higher scores indicate better value for the price."
+          }
+        }
+      ]
+    };
+
     return (
       <div className="min-h-screen bg-slate-950 tactical-grid">
+        {/* Structured Data */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
         {/* Command Header */}
         <div className="command-panel border-b border-purple-400/20 p-6 mb-8">
           <div className="max-w-7xl mx-auto">
@@ -61,10 +132,58 @@ export default async function StorageCommandConsole() {
                 <span className="text-purple-300">DXM Value Scoring</span> provides quantitative analysis for tactical storage procurement decisions.
               </p>
             </div>
+
+            {/* Growth CTAs */}
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/best-ssd-deals"
+                className="hologram-button px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-purple-100"
+              >
+                Best SSD Deals
+              </Link>
+              <Link
+                href="/memory"
+                className="glass-panel-cyber px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-purple-200 border border-purple-500/30 hover:border-purple-400/60 transition-colors"
+              >
+                Pair RAM
+              </Link>
+              <Link
+                href="/gaming-laptops"
+                className="glass-panel-cyber px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-slate-200 border border-slate-700/40 hover:border-slate-500/60 transition-colors"
+              >
+                Laptop Upgrades
+              </Link>
+            </div>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-6">
+          {/* DXM Picks */}
+          {picks.length > 0 && (
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full glow-purple" />
+                  <h2 className="cyber-title text-xl text-white">DXM TOP PICKS</h2>
+                </div>
+                <Link href="/best-ssd-deals" className="text-xs font-mono uppercase tracking-wider text-purple-300 hover:text-purple-200">
+                  View best deals →
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+                {picks.map((pick) => (
+                  <div key={pick.label} className="relative">
+                    <div className="absolute -top-2 left-3 z-10 px-2 py-1 text-[9px] font-mono uppercase tracking-widest bg-purple-500/20 border border-purple-400/40 rounded text-purple-200">
+                      {pick.label}
+                    </div>
+                    <CyberDealCard deal={pick.deal} source={pick.source} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Command Controls */}
           <div className="glass-panel-cyber rounded-xl p-4 mb-8 scanlines">
             <div className="flex flex-wrap items-center justify-between gap-4">

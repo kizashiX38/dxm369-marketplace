@@ -1,12 +1,17 @@
 // DXM369 CPU Command Console - Hardware Intelligence Terminal
 // Weapons-grade interface for tactical CPU evaluation
 
+import { Metadata } from "next";
+import Link from "next/link";
 import { DXMProductResponse, extractProductsFromResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
 import { appConfig } from "@/lib/env";
+import { generateCategorySEO, generateBreadcrumbStructuredData } from "@/lib/seo";
 
 // ISR: Revalidate every hour for fresh deals while maintaining CDN caching
 export const revalidate = 3600;
+
+export const metadata: Metadata = generateCategorySEO("cpu");
 
 export default async function CPUsCommandConsole() {
   try {
@@ -23,9 +28,75 @@ export default async function CPUsCommandConsole() {
     }
     const dealsPayload: DXMProductResponse = await response.json();
     const deals = extractProductsFromResponse(dealsPayload);
-    
+
+    const dealsByScore = [...deals].sort((a, b) => b.dxmScore - a.dxmScore);
+    const bestOverall = dealsByScore[0];
+    const bestValue = [...deals]
+      .filter((d) => d.price > 0)
+      .sort((a, b) => (b.dxmScore / b.price) - (a.dxmScore / a.price))[0];
+    const bestBudget = [...deals]
+      .filter((d) => d.price > 0 && d.price <= 250)
+      .sort((a, b) => b.dxmScore - a.dxmScore)[0];
+    const bestHighEnd = [...deals]
+      .filter((d) => d.price >= 450)
+      .sort((a, b) => b.dxmScore - a.dxmScore)[0];
+
+    const picks = [
+      { label: "DXM Best Overall", deal: bestOverall, source: "seo-pick-overall" },
+      { label: "DXM Best Value", deal: bestValue, source: "seo-pick-value" },
+      { label: "DXM Best Budget", deal: bestBudget, source: "seo-pick-budget" },
+      { label: "DXM High-End Pick", deal: bestHighEnd, source: "seo-pick-highend" },
+    ].filter((p): p is { label: string; deal: NonNullable<typeof p.deal>; source: string } => Boolean(p.deal));
+
+    const breadcrumbData = generateBreadcrumbStructuredData([
+      { name: "Home", url: "/" },
+      { name: "CPUs", url: "/cpus" }
+    ]);
+
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What CPU is best for gaming in 2025?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For gaming, Intel 14th gen Core i7/i9 and AMD Ryzen 7000X3D series excel in frame rates. Budget options like i5-14600K offer excellent gaming value. Check DXM scores for recommendations."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many cores do I need for gaming?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Modern games efficiently use 6-8 cores. For gaming + streaming, 12+ cores recommended. Productivity workloads benefit from higher core counts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Intel vs AMD: Which should I buy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Intel excels in single-thread gaming performance; AMD offers better multi-thread and value. Both are excellent for 2025. Compare specific models on DXM for your needs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the DXM Value Score?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DXM Score evaluates CPUs on performance value, deal quality, trust signals, efficiency, and market trends. Higher scores indicate better value for the price."
+          }
+        }
+      ]
+    };
+
     return (
       <div className="min-h-screen bg-slate-950 tactical-grid">
+        {/* Structured Data */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
         {/* Command Header */}
         <div className="command-panel border-b border-amber-400/20 p-6 mb-8">
           <div className="max-w-7xl mx-auto">
@@ -59,10 +130,59 @@ export default async function CPUsCommandConsole() {
                 <span className="text-amber-300">DXM Value Scoring</span> provides quantitative analysis for tactical hardware procurement decisions.
               </p>
             </div>
+
+            {/* Growth CTAs */}
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/gpus"
+                className="glass-panel-cyber px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-amber-200 border border-amber-500/30 hover:border-amber-400/60 transition-colors"
+              >
+                Pair a GPU
+              </Link>
+              <Link
+                href="/motherboards"
+                className="glass-panel-cyber px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-slate-200 border border-slate-700/40 hover:border-slate-500/60 transition-colors"
+              >
+                Find a Motherboard
+              </Link>
+              <Link
+                href="/builds"
+                className="hologram-button px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-amber-100"
+              >
+                Browse Builds
+              </Link>
+            </div>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-6">
+          {/* DXM Picks */}
+          {picks.length > 0 && (
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+                  <h2 className="cyber-title text-xl text-white">
+                    DXM TOP PICKS
+                  </h2>
+                </div>
+                <Link href="/cpus" className="text-xs font-mono uppercase tracking-wider text-amber-300 hover:text-amber-200">
+                  Updated picks →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+                {picks.map((pick) => (
+                  <div key={pick.label} className="relative">
+                    <div className="absolute -top-2 left-3 z-10 px-2 py-1 text-[9px] font-mono uppercase tracking-widest bg-amber-500/20 border border-amber-400/40 rounded text-amber-200">
+                      {pick.label}
+                    </div>
+                    <CyberDealCard deal={pick.deal} source={pick.source} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Command Controls */}
           <div className="glass-panel-cyber rounded-xl p-4 mb-8 scanlines border-amber-500/20">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -138,6 +258,37 @@ export default async function CPUsCommandConsole() {
                 <span className="ml-2 text-amber-300">↗</span>
               </button>
             </div>
+          </div>
+
+          {/* Internal Link Cluster - Related Categories */}
+          <div className="mb-8">
+            <h2 className="cyber-title text-xl text-white mb-6">RELATED INTELLIGENCE CLUSTERS</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <a href="/intel-i7-14700k-vs-ryzen-7-7800x3d" className="glass-panel-cyber rounded-lg p-6 border-amber-400/30 hover:border-amber-400/60 hover:bg-amber-400/5 transition">
+                <h3 className="cyber-subtitle text-amber-300 mb-2">CPU COMPARISON</h3>
+                <p className="text-slate-300 font-mono text-sm mb-4">i7-14700K vs Ryzen 7 7800X3D</p>
+                <p className="text-slate-400 text-xs">Gaming vs productivity performance analysis</p>
+              </a>
+              <a href="/gpus" className="glass-panel-cyber rounded-lg p-6 border-cyan-400/30 hover:border-cyan-400/60 hover:bg-cyan-400/5 transition">
+                <h3 className="cyber-subtitle text-cyan-300 mb-2">GPU MATRIX</h3>
+                <p className="text-slate-300 font-mono text-sm mb-4">Graphics Intelligence</p>
+                <p className="text-slate-400 text-xs">Explore gaming GPUs paired with top CPUs</p>
+              </a>
+              <a href="/motherboards" className="glass-panel-cyber rounded-lg p-6 border-purple-400/30 hover:border-purple-400/60 hover:bg-purple-400/5 transition">
+                <h3 className="cyber-subtitle text-purple-300 mb-2">MOTHERBOARD COMPAT</h3>
+                <p className="text-slate-300 font-mono text-sm mb-4">Socket Compatibility</p>
+                <p className="text-slate-400 text-xs">Find compatible chipsets for AMD/Intel builds</p>
+              </a>
+            </div>
+          </div>
+
+          {/* Building Guide Link */}
+          <div className="glass-panel-cyber rounded-lg p-6 border-amber-400/20 mb-8">
+            <h3 className="cyber-title text-white mb-3">BUILD RECOMMENDATIONS</h3>
+            <p className="text-slate-300 mb-4">CPUs pair best with compatible motherboards, RAM, and GPUs for optimal performance.</p>
+            <a href="/builds" className="text-amber-300 hover:text-amber-200 font-mono text-sm underline">
+              View curated PC builds →
+            </a>
           </div>
         </div>
 

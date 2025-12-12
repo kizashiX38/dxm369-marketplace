@@ -114,22 +114,63 @@ export function generateProductSEO(deal: DealRadarItem): Metadata {
 export function generateCategorySEO(category: string, productCount: number = 0): Metadata {
   const categoryNames: Record<string, string> = {
     gpu: "Graphics Cards (GPUs)",
-    cpu: "Processors (CPUs)", 
+    cpu: "Processors (CPUs)",
     laptop: "Gaming Laptops",
     monitor: "Gaming Monitors",
     ssd: "SSD Storage",
     ram: "Memory (RAM)",
+    storage: "SSD Storage",
+    memory: "Memory (RAM)",
     motherboard: "Motherboards",
-    psu: "Power Supplies"
+    psu: "Power Supplies",
+    "gaming-monitors": "Gaming Monitors"
   };
 
   const categoryName = categoryNames[category] || category.toUpperCase();
-  const title = `Best ${categoryName} Deals ${new Date().getFullYear()} | DXM369`;
-  const description = `Find the best ${categoryName.toLowerCase()} deals with DXM Value Scoring. ${productCount > 0 ? `${productCount}+ products` : 'Real-time pricing'} analysis, performance comparisons, and affiliate links to top retailers.`;
+  const urlPath = (() => {
+    const explicitPaths: Record<string, string> = {
+      gpu: "/gpus",
+      cpu: "/cpus",
+      laptop: "/laptops",
+      monitor: "/monitors",
+      "gaming-monitors": "/gaming-monitors",
+      ssd: "/storage",
+      storage: "/storage",
+      ram: "/memory",
+      memory: "/memory",
+      motherboard: "/motherboards",
+      psu: "/power-supplies",
+    };
+
+    return explicitPaths[category] || `/${category}`;
+  })();
+
+  const year = new Date().getFullYear();
+  const title = `Best ${categoryName} Deals ${year} (Ranked by DXM Score) | DXM369`;
+  const description = (() => {
+    const count = productCount > 0 ? `${productCount}+` : "top";
+    const common = `Live ${categoryName.toLowerCase()} deals with DXM Value Scoring. Compare price vs performance, spot value picks, and click through to Amazon.`;
+
+    const byCategory: Record<string, string> = {
+      gpu: `Best GPU deals ${year} ranked by DXM Score. Compare RTX vs Radeon value, 1080p/1440p/4K picks, and price drops across ${count} GPUs.`,
+      cpu: `Best CPU deals ${year} ranked by DXM Score. Compare Intel vs Ryzen value for gaming and work, and shop ${count} CPUs with live pricing.`,
+      laptop: `Best laptop deals ${year} ranked by DXM Score. Find gaming and productivity laptops by budget, specs, and price drops across ${count} laptops.`,
+      ssd: `Best SSD deals ${year} ranked by DXM Score. Compare NVMe vs SATA value, capacity tiers, and shop ${count} SSDs with live pricing.`,
+      ram: `Best RAM deals ${year} ranked by DXM Score. Compare DDR4 vs DDR5 value, capacity kits, and shop ${count} memory picks with live pricing.`,
+      storage: `Best SSD deals ${year} ranked by DXM Score. Compare NVMe vs SATA value, capacity tiers, and shop ${count} SSDs with live pricing.`,
+      memory: `Best RAM deals ${year} ranked by DXM Score. Compare DDR4 vs DDR5 value, capacity kits, and shop ${count} memory picks with live pricing.`,
+    };
+
+    return byCategory[category] || common;
+  })();
+  const canonicalUrl = `https://dxm369.com${urlPath}`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     keywords: [
       `${category} deals`,
       `best ${category}`,
@@ -143,7 +184,7 @@ export function generateCategorySEO(category: string, productCount: number = 0):
     openGraph: {
       title,
       description,
-      url: `/${category}s`,
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",
@@ -279,6 +320,54 @@ export const hardwareKeywords = {
   ]
 };
 
+// Generate comparison page metadata
+export function generateComparisonSEO(productA: string, productB: string, category: string): Metadata {
+  const title = `${productA} vs ${productB} ${new Date().getFullYear()} | Which is Better? | DXM369`;
+  const description = `Detailed comparison of ${productA} vs ${productB} with DXM Value Scoring. Performance benchmarks, pricing analysis, and current deals for both ${category} products.`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      `${productA} vs ${productB}`,
+      `${productA} vs ${productB} comparison`,
+      `${productA} vs ${productB} ${new Date().getFullYear()}`,
+      `${productA} vs ${productB} benchmark`,
+      `${productA} vs ${productB} price`,
+      `${productA} deals`,
+      `${productB} deals`,
+      `${category} comparison`,
+      `best ${category}`
+    ],
+    openGraph: {
+      title,
+      description,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
+
+// Generate comparison FAQ schema
+export function generateComparisonFAQSchema(productA: string, productB: string, faqs: Array<{question: string, answer: string}>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+}
+
 // Generate sitemap data
 export function generateSitemapUrls() {
   const baseUrl = "https://dxm369.com";
@@ -290,6 +379,8 @@ export function generateSitemapUrls() {
     { url: "/deals", priority: 0.8, changefreq: "hourly" },
     { url: "/trending", priority: 0.7, changefreq: "hourly" },
     { url: "/about", priority: 0.5, changefreq: "monthly" },
+    // Comparison pages
+    { url: "/rtx-4070-vs-rx-7800-xt", priority: 0.8, changefreq: "weekly" },
   ];
 
   return staticPages.map(page => ({

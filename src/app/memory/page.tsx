@@ -1,12 +1,17 @@
 // DXM369 Memory Command Console - Hardware Intelligence Terminal
 // Tactical RAM/Memory evaluation matrix
 
+import { Metadata } from "next";
 import { DXMProductResponse, extractProductsFromResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
 import { appConfig } from "@/lib/env";
+import { generateCategorySEO, generateBreadcrumbStructuredData } from "@/lib/seo";
+import Link from "next/link";
 
 // ISR: Revalidate every hour for fresh deals while maintaining CDN caching
 export const revalidate = 3600;
+
+export const metadata: Metadata = generateCategorySEO("ram");
 
 export default async function MemoryCommandConsole() {
   try {
@@ -26,8 +31,74 @@ export default async function MemoryCommandConsole() {
     const dealsPayload: DXMProductResponse = await response.json();
     const deals = extractProductsFromResponse(dealsPayload);
 
+    const dealsByScore = [...deals].sort((a, b) => b.dxmScore - a.dxmScore);
+    const bestOverall = dealsByScore[0];
+    const bestValue = [...deals]
+      .filter((d) => d.price > 0)
+      .sort((a, b) => (b.dxmScore / b.price) - (a.dxmScore / a.price))[0];
+    const bestBudget = [...deals]
+      .filter((d) => d.price > 0 && d.price <= 80)
+      .sort((a, b) => b.dxmScore - a.dxmScore)[0];
+    const bestHighEnd = [...deals]
+      .filter((d) => d.price >= 200)
+      .sort((a, b) => b.dxmScore - a.dxmScore)[0];
+
+    const picks = [
+      { label: "DXM Best Overall", deal: bestOverall, source: "seo-pick-overall" },
+      { label: "DXM Best Value", deal: bestValue, source: "seo-pick-value" },
+      { label: "DXM Best Budget", deal: bestBudget, source: "seo-pick-budget" },
+      { label: "DXM High-End Pick", deal: bestHighEnd, source: "seo-pick-highend" },
+    ].filter((p): p is { label: string; deal: NonNullable<typeof p.deal>; source: string } => Boolean(p.deal));
+
+    const breadcrumbData = generateBreadcrumbStructuredData([
+      { name: "Home", url: "/" },
+      { name: "Memory", url: "/memory" }
+    ]);
+
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How much RAM do I need for gaming?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "16GB is standard for 2025 gaming. 32GB recommended for streaming, content creation, or heavy multitasking. 64GB+ for professional workloads."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "DDR5 vs DDR4: Should I upgrade?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DDR5 is faster but more expensive. For gaming, DDR4 remains excellent value. Choose DDR5 for new builds with modern CPUs (Intel 13th gen+, AMD Ryzen 7000+)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What speed (MHz) RAM should I buy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DDR4: 3200-3600MHz is ideal. DDR5: 5600MHz+ recommended. Higher speeds improve gaming performance slightly but cost more."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is brand (Corsair, G.Skill, Kingston) important?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Top brands offer reliability and warranty. Any major brand is fine for gaming. Compatibility matters more—check motherboard specs for support."
+          }
+        }
+      ]
+    };
+
     return (
       <div className="min-h-screen bg-slate-950 tactical-grid">
+        {/* Structured Data */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
         {/* Command Header */}
         <div className="command-panel border-b border-blue-400/20 p-6 mb-8">
           <div className="max-w-7xl mx-auto">
@@ -61,10 +132,58 @@ export default async function MemoryCommandConsole() {
                 <span className="text-blue-300">DXM Value Scoring</span> provides quantitative analysis for tactical memory procurement decisions.
               </p>
             </div>
+
+            {/* Growth CTAs */}
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/storage"
+                className="glass-panel-cyber px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-blue-200 border border-blue-500/30 hover:border-blue-400/60 transition-colors"
+              >
+                Pair an SSD
+              </Link>
+              <Link
+                href="/gaming-laptops"
+                className="glass-panel-cyber px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-slate-200 border border-slate-700/40 hover:border-slate-500/60 transition-colors"
+              >
+                Laptop Upgrades
+              </Link>
+              <Link
+                href="/builds"
+                className="hologram-button px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-blue-100"
+              >
+                Browse Builds
+              </Link>
+            </div>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-6">
+          {/* DXM Picks */}
+          {picks.length > 0 && (
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full glow-blue" />
+                  <h2 className="cyber-title text-xl text-white">DXM TOP PICKS</h2>
+                </div>
+                <Link href="/memory" className="text-xs font-mono uppercase tracking-wider text-blue-300 hover:text-blue-200">
+                  Updated picks →
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+                {picks.map((pick) => (
+                  <div key={pick.label} className="relative">
+                    <div className="absolute -top-2 left-3 z-10 px-2 py-1 text-[9px] font-mono uppercase tracking-widest bg-blue-500/20 border border-blue-400/40 rounded text-blue-200">
+                      {pick.label}
+                    </div>
+                    <CyberDealCard deal={pick.deal} source={pick.source} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Command Controls */}
           <div className="glass-panel-cyber rounded-xl p-4 mb-8 scanlines">
             <div className="flex flex-wrap items-center justify-between gap-4">
