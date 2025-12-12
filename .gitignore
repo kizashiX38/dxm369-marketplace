@@ -71,3 +71,6 @@ playwright/.cache/
 exports/
 *.json.gz
 .env*.local
+
+# local logs
+full-stack.out
