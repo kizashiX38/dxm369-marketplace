@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { DXMProductResponse } from "@/types/api";
+import { DXMProduct } from "@/lib/types/product";
+import { DXMProductResponse, extractProductsFromResponse } from "@/types/api";
 import { DealCard } from "@/components/DealCard";
 import { appConfig } from "@/lib/env";
 
@@ -10,9 +11,9 @@ export const revalidate = 3600;
 export default async function Home() {
   // Fetch real deal data for homepage sections from normalized API routes
   // Gracefully handle API failures during build/development
-  let featuredDeals: DXMProductResponse = [];
-  let trendingDeals: DXMProductResponse = [];
-  let topGpuDeals: DXMProductResponse = [];
+  let featuredDeals: DXMProduct[] = [];
+  let trendingDeals: DXMProduct[] = [];
+  let topGpuDeals: DXMProduct[] = [];
 
   try {
     const baseUrl = appConfig.baseUrl;
@@ -24,14 +25,16 @@ export default async function Home() {
     ]);
 
     if (gpusRes?.ok) {
-      const gpus: DXMProductResponse = await gpusRes.json();
+      const gpusPayload: DXMProductResponse = await gpusRes.json();
+      const gpus = extractProductsFromResponse(gpusPayload);
       topGpuDeals = gpus.slice(0, 3);
       featuredDeals = gpus.slice(0, 4); // Top 4 featured deals
       trendingDeals = gpus.slice(0, 6); // Top 6 trending deals (sorted by DXM score)
     }
 
     if (buildsRes?.ok) {
-      const builds: DXMProductResponse = await buildsRes.json();
+      const buildsPayload: DXMProductResponse = await buildsRes.json();
+      const builds = extractProductsFromResponse(buildsPayload);
       // Use builds for featured if available
       if (builds.length > 0 && featuredDeals.length < 4) {
         featuredDeals = [...featuredDeals, ...builds.slice(0, 4 - featuredDeals.length)];

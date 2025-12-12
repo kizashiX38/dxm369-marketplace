@@ -4,9 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { apiSafe } from "@/lib/apiSafe";
 import { queryAll } from "@/lib/db";
 import type { DXMProduct } from "@/lib/types/product";
+import { env } from "@/lib/env";
+import { buildAmazonProductUrl } from "@/lib/affiliate";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 3600; // ISR: revalidate every hour
+export const revalidate = 900; // ISR: revalidate every 15 minutes
 
 interface MarketplaceProductRow {
   id: number;
@@ -23,6 +24,18 @@ interface MarketplaceProductRow {
 export const GET = apiSafe(async (request: NextRequest, context: any) => {
   const params = await context.params;
   const category = params.category.toLowerCase();
+
+  if (!env.DATABASE_URL) {
+    return NextResponse.json(
+      { ok: false, data: [], error: "DATABASE_URL not configured" },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    );
+  }
 
   // Query marketplace products from marketplace_products table
   const raw = await queryAll<MarketplaceProductRow>(
@@ -59,11 +72,20 @@ export const GET = apiSafe(async (request: NextRequest, context: any) => {
     imageUrl: row.image_url || fallbackImageMap[category] || 'https://images-na.ssl-images-amazon.com/images/I/71-Hdt4fuwL._AC_SY300_SX300_.jpg',
     availability: 'In Stock',
     vendor: 'Amazon',
-    affiliateLink: `https://amazon.com/dp/${row.asin}?tag=dxm369-20`,
+    affiliateLink: buildAmazonProductUrl(row.asin, {
+      context: { category: category as any, pageType: "category" },
+    }),
     primeEligible: false,
     specs: {},
     lastUpdated: new Date().toISOString(),
   }));
 
-  return NextResponse.json(products);
+  return NextResponse.json(
+    { ok: true, data: products },
+    {
+      headers: {
+        "Cache-Control": "s-maxage=900, stale-while-revalidate=3600",
+      },
+    }
+  );
 });

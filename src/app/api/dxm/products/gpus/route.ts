@@ -4,10 +4,23 @@ import { apiSafe } from "@/lib/apiSafe";
 import { queryAll } from "@/lib/db";
 import { normalizeDealRadarItemToDXMProduct } from "@/lib/products/normalizeDXMProduct";
 import type { DealRadarItem } from "@/lib/dealRadarTypes";
+import { env } from "@/lib/env";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 900;
 
 export const GET = apiSafe(async (request: NextRequest) => {
+  if (!env.DATABASE_URL) {
+    return NextResponse.json(
+      { ok: false, data: [], error: "DATABASE_URL not configured" },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    );
+  }
+
   // Query products from product_catalog table (same as CPU route)
   const raw = await queryAll<{
     id: number;
@@ -52,6 +65,12 @@ export const GET = apiSafe(async (request: NextRequest) => {
     })
     .filter(Boolean);
 
-  return NextResponse.json(normalized);
+  return NextResponse.json(
+    { ok: true, data: normalized },
+    {
+      headers: {
+        "Cache-Control": "s-maxage=900, stale-while-revalidate=3600",
+      },
+    }
+  );
 });
-

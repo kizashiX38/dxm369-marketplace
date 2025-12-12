@@ -3,7 +3,7 @@
 
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { DXMProductResponse } from "@/types/api";
+import { DXMProductResponse, extractProductsFromResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
 import { appConfig } from "@/lib/env";
 
@@ -233,7 +233,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       throw new Error(`Failed to fetch ${category} products: ${response.statusText}`);
     }
 
-    const deals: DXMProductResponse = await response.json();
+    const dealsPayload: DXMProductResponse = await response.json();
+    const deals = extractProductsFromResponse(dealsPayload);
 
     if (!deals || deals.length === 0) {
       return <ComingSoonPage category={category} config={config} isEmpty />;
@@ -254,7 +255,7 @@ function CategoryGrid({
 }: {
   category: string;
   config: typeof CATEGORY_CONFIG[string];
-  deals: DXMProductResponse;
+  deals: ReturnType<typeof extractProductsFromResponse>;
 }) {
   const accentClasses = getAccentClasses(config.accentColor);
 

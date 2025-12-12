@@ -1,7 +1,7 @@
 // DXM369 GPU Command Console - Hardware Intelligence Terminal
 // Weapons-grade interface for tactical GPU evaluation
 
-import { DXMProductResponse } from "@/types/api";
+import { DXMProductResponse, extractProductsFromResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
 import { appConfig } from "@/lib/env";
 
@@ -21,7 +21,8 @@ export default async function GPUsCommandConsole() {
     if (!response.ok) {
       throw new Error(`Failed to fetch GPU products: ${response.statusText}`);
     }
-    const deals: DXMProductResponse = await response.json();
+    const dealsPayload: DXMProductResponse = await response.json();
+    const deals = extractProductsFromResponse(dealsPayload);
     
     return (
       <div className="min-h-screen bg-slate-950 tactical-grid">

@@ -1,7 +1,7 @@
 // DXM369 Storage Command Console - Hardware Intelligence Terminal
 // Tactical SSD/Storage evaluation matrix
 
-import { DXMProductResponse } from "@/types/api";
+import { DXMProductResponse, extractProductsFromResponse } from "@/types/api";
 import { CyberDealCard } from "@/components/CyberDealCard";
 import { appConfig } from "@/lib/env";
 
@@ -23,7 +23,8 @@ export default async function StorageCommandConsole() {
       throw new Error(`Failed to fetch products: ${response.statusText}`);
     }
     
-    const deals: DXMProductResponse = await response.json();
+    const dealsPayload: DXMProductResponse = await response.json();
+    const deals = extractProductsFromResponse(dealsPayload);
 
     return (
       <div className="min-h-screen bg-slate-950 tactical-grid">
