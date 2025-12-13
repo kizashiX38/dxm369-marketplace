@@ -5,6 +5,7 @@
 import { MetadataRoute } from 'next';
 import { getGpuDeals, getCpuDeals, getLaptopDeals } from '@/lib/dealRadar';
 import { appConfig } from '@/lib/env';
+import { COMPARISON_TEMPLATES } from '@/lib/comparisonPageGenerator';
 
 // All valid category slugs - sync with [category]/page.tsx CATEGORY_CONFIG
 const CATEGORY_SLUGS = [
@@ -54,6 +55,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  // Comparison pages
+  const comparisonPages: MetadataRoute.Sitemap = Object.values(COMPARISON_TEMPLATES).map((config) => ({
+    url: `${baseUrl}/${config.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
   // Dynamic product pages
   // Gracefully handle API failures - return static pages only if API unavailable
   try {
@@ -84,9 +93,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
     ];
 
-    return [...staticPages, ...categoryPages, ...productPages];
+    return [...staticPages, ...categoryPages, ...comparisonPages, ...productPages];
   } catch (error) {
     console.error('Error generating sitemap:', error);
-    return [...staticPages, ...categoryPages];
+    return [...staticPages, ...categoryPages, ...comparisonPages];
   }
 }
