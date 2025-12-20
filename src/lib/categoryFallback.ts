@@ -1,4 +1,4 @@
-import type { DXMProduct } from "@/lib/products/types";
+import type { DXMProduct } from "@/lib/types/product";
 
 export function getCategoryFallback(category: string): DXMProduct[] {
   const fallbackProducts: Record<string, DXMProduct[]> = {
