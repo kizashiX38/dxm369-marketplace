@@ -109,7 +109,6 @@ export default function ProductExtractor({ urls = [] }: ProductExtractorProps) {
                     <div className="space-y-1 text-sm">
                       <p><span className="text-gray-400">ASIN:</span> <span className="text-cyan-300 font-mono">{product.asin}</span></p>
                       <p><span className="text-gray-400">Brand:</span> <span className="text-white">{product.brand}</span></p>
-                      <p><span className="text-gray-400">Category:</span> <span className="text-white">{product.category}</span></p>
                       <p><span className="text-gray-400">Price:</span> <span className="text-green-400 font-bold">${product.price}</span></p>
                       {product.originalPrice && (
                         <p><span className="text-gray-400">Original:</span> <span className="text-gray-500 line-through">${product.originalPrice}</span></p>
