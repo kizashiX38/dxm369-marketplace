@@ -1,6 +1,7 @@
 import type { DXMProduct } from "@/lib/types/product";
 
 export function getCategoryFallback(category: string): DXMProduct[] {
+  const now = new Date().toISOString();
   const fallbackProducts: Record<string, DXMProduct[]> = {
     GPU: [
       {
@@ -14,7 +15,8 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         availability: "in_stock",
         isPrime: true,
         vendor: "Amazon",
-        specs: {}
+        specs: {},
+        lastUpdated: now
       }
     ],
     CPU: [
@@ -29,7 +31,8 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         availability: "in_stock",
         isPrime: true,
         vendor: "Amazon",
-        specs: {}
+        specs: {},
+        lastUpdated: now
       }
     ],
     LAPTOP: [
@@ -44,7 +47,8 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         availability: "in_stock",
         isPrime: true,
         vendor: "Amazon",
-        specs: {}
+        specs: {},
+        lastUpdated: now
       }
     ],
     MEMORY: [
@@ -59,7 +63,8 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         availability: "in_stock",
         isPrime: true,
         vendor: "Amazon",
-        specs: {}
+        specs: {},
+        lastUpdated: now
       }
     ]
   };
