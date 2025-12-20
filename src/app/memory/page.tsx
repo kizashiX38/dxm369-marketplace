@@ -19,9 +19,8 @@ export const metadata: Metadata = generateCategorySEO("ram");
 export default async function MemoryCommandConsole() {
   try {
     // Fetch from normalized API route
-    const baseUrl = appConfig.baseUrl;
-    const response = await fetch(`${baseUrl}/api/dxm/products/memory`, {
-      next: { revalidate: 3600 },
+    const response = await fetch(`http://localhost:3000/api/dxm/products/memory`, {
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
       },

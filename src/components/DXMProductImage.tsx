@@ -52,8 +52,10 @@ export function DXMProductImage({
       gpu: "/images/placeholder-gpu.svg",
       cpu: "/images/placeholder-cpu.svg", 
       laptop: "/images/placeholder-laptop.svg",
+      memory: "/images/placeholder-memory.svg",
+      ram: "/images/placeholder-memory.svg",
     };
-    return fallbacks[product.category as keyof typeof fallbacks] || "/images/placeholder-gpu.svg";
+    return fallbacks[product.category as keyof typeof fallbacks] || "/images/placeholder-memory.svg";
   };
 
   const imageSrc = imageError || !showFallback ? getFallbackImage() : generateImagePath();

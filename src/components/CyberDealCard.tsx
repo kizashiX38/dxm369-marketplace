@@ -36,9 +36,9 @@ export function CyberDealCard({ deal, source = "cyber-grid" }: CyberDealCardProp
   } = deal;
 
   // Extract specs from specs object
-  const vram = specs.vram;
-  const tdp = specs.tdp;
-  const boostClock = specs.boostClock;
+  const vram = specs?.vram;
+  const tdp = specs?.tdp;
+  const boostClock = specs?.boostClock;
   
   // DXM Score Tier Classification
   const getScoreTier = (score: number) => {
