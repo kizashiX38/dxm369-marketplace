@@ -127,21 +127,6 @@ export default function ProductExtractor({ urls = [] }: ProductExtractorProps) {
                       />
                     )}
                   </div>
-
-                  {/* Specifications */}
-                  {product.specifications && Object.keys(product.specifications).length > 0 && (
-                    <div className="md:col-span-2">
-                      <h5 className="text-sm font-medium text-gray-300 mb-2">Specifications:</h5>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        {Object.entries(product.specifications).slice(0, 6).map(([key, value]) => (
-                          <div key={key} className="flex">
-                            <span className="text-gray-400 w-20 flex-shrink-0">{key}:</span>
-                            <span className="text-white">{value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="text-red-400">
