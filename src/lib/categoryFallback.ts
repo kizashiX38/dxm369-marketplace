@@ -12,7 +12,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 2171,
         dxmScore: 95,
         imageUrl: "https://m.media-amazon.com/images/I/711vU2IrEuL._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       }
@@ -27,7 +27,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 449,
         dxmScore: 92,
         imageUrl: "https://m.media-amazon.com/images/I/61vGQNUEsGL._AC_SL1280_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       }
@@ -42,7 +42,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 1399,
         dxmScore: 91,
         imageUrl: "https://m.media-amazon.com/images/I/81Si31LMp5L._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       },
@@ -55,7 +55,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 1299,
         dxmScore: 89,
         imageUrl: "https://m.media-amazon.com/images/I/71HWQ09yKbL._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       },
@@ -68,7 +68,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 1099,
         dxmScore: 87,
         imageUrl: "https://m.media-amazon.com/images/I/71sQV0K2IjL._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       },
@@ -81,7 +81,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 1449,
         dxmScore: 90,
         imageUrl: "https://m.media-amazon.com/images/I/81ikideGaqL._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       }
@@ -96,7 +96,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 131,
         dxmScore: 94,
         imageUrl: "https://m.media-amazon.com/images/I/81agXcNA6zL._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       },
@@ -109,7 +109,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 131,
         dxmScore: 93,
         imageUrl: "https://m.media-amazon.com/images/I/71QsF8ezSBL._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       },
@@ -122,7 +122,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 839,
         dxmScore: 89,
         imageUrl: "https://m.media-amazon.com/images/I/81Rw6Pffb0L._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       },
@@ -135,7 +135,7 @@ export function getCategoryFallback(category: string): DXMProduct[] {
         price: 3715,
         dxmScore: 85,
         imageUrl: "https://m.media-amazon.com/images/I/81mwcITtHBL._AC_SL1500_.jpg",
-        availability: "In Stock",
+        availability: "in_stock",
         primeEligible: true,
         vendor: "Amazon"
       }
