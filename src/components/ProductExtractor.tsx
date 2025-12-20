@@ -110,12 +110,6 @@ export default function ProductExtractor({ urls = [] }: ProductExtractorProps) {
                       <p><span className="text-gray-400">ASIN:</span> <span className="text-cyan-300 font-mono">{product.asin}</span></p>
                       <p><span className="text-gray-400">Brand:</span> <span className="text-white">{product.brand}</span></p>
                       <p><span className="text-gray-400">Price:</span> <span className="text-green-400 font-bold">${product.price}</span></p>
-                      {product.originalPrice && (
-                        <p><span className="text-gray-400">Original:</span> <span className="text-gray-500 line-through">${product.originalPrice}</span></p>
-                      )}
-                      {product.discount && (
-                        <p><span className="text-gray-400">Discount:</span> <span className="text-red-400">{product.discount}%</span></p>
-                      )}
                       {product.rating && (
                         <p><span className="text-gray-400">Rating:</span> <span className="text-yellow-400">{product.rating}/5</span> ({product.reviewCount} reviews)</p>
                       )}
@@ -123,25 +117,14 @@ export default function ProductExtractor({ urls = [] }: ProductExtractorProps) {
                     </div>
                   </div>
 
-                  {/* Image & Features */}
+                  {/* Image */}
                   <div>
                     {product.imageUrl && (
                       <img 
                         src={product.imageUrl} 
-                        alt={product.title}
+                        alt={product.title || 'Product image'}
                         className="w-32 h-32 object-contain bg-white rounded mb-3"
                       />
-                    )}
-                    
-                    {product.features && product.features.length > 0 && (
-                      <div>
-                        <h5 className="text-sm font-medium text-gray-300 mb-1">Features:</h5>
-                        <ul className="text-xs text-gray-400 space-y-1">
-                          {product.features.slice(0, 3).map((feature, i) => (
-                            <li key={i}>• {feature}</li>
-                          ))}
-                        </ul>
-                      </div>
                     )}
                   </div>
 
