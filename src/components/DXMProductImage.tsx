@@ -86,6 +86,7 @@ export function DXMProductImage({
           alt={product.title}
           width={width}
           height={height}
+          style={{ width: 'auto', height: 'auto' }}
           className="w-full h-full object-contain transition-all duration-300 hover:scale-105 cyber-glow"
           onLoad={() => setIsLoading(false)}
           onError={() => {

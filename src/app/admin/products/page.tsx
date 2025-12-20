@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const CATEGORIES = ['gpu', 'cpu', 'laptop', 'monitor', 'psu', 'ssd', 'motherboard', 'ram'];
 
@@ -23,11 +23,7 @@ export default function ProductsAdminPage() {
   const [message, setMessage] = useState('');
   const [fileInput, setFileInput] = useState<File | null>(null);
 
-  useEffect(() => {
-    loadProducts();
-  }, [selectedCategory, showHidden]);
-
-  async function loadProducts() {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`/api/admin/products/list?category=${selectedCategory}`, {
@@ -47,7 +43,11 @@ export default function ProductsAdminPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts, showHidden]);
 
   async function addProduct() {
     if (!asin.trim()) {

@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { buildAmazonProductUrl } from "@/lib/affiliate";
 import { DXMProduct, getAvailabilityDisplay } from "@/lib/types/product";
@@ -21,9 +21,9 @@ interface AIEnhancedDealCardProps {
   intent?: 'review' | 'top10' | 'browse' | 'comparison' | 'deal'; // User intent
 }
 
-export default function AIEnhancedDealCard({ 
-  product, 
-  variant = "ai-enhanced", 
+export default function AIEnhancedDealCard({
+  product,
+  variant = "ai-enhanced",
   showAISummary = true,
   className = "",
   source = "ai-enhanced-card",
@@ -44,19 +44,12 @@ export default function AIEnhancedDealCard({
 
   const savingsPercent = product.savingsPercent || 0;
 
-  // Fetch AI summary
-  useEffect(() => {
-    if (showAISummary && variant === "ai-enhanced") {
-      fetchAISummary();
-    }
-  }, [product.asin, showAISummary, variant]);
-
-  const fetchAISummary = async () => {
+  const fetchAISummary = useCallback(async () => {
     setSummaryLoading(true);
     try {
       const response = await fetch(`/api/ai-summary?asin=${product.asin}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setAiSummary(data.summary);
       }
@@ -65,7 +58,14 @@ export default function AIEnhancedDealCard({
     } finally {
       setSummaryLoading(false);
     }
-  };
+  }, [product.asin]);
+
+  // Fetch AI summary
+  useEffect(() => {
+    if (showAISummary && variant === "ai-enhanced") {
+      fetchAISummary();
+    }
+  }, [showAISummary, variant, fetchAISummary]);
 
   const handleViewDeal = () => {
     trackAffiliateClick({
@@ -101,7 +101,7 @@ export default function AIEnhancedDealCard({
   const getFutureProofingColor = (rating: string) => {
     const colors = {
       excellent: "text-green-400",
-      good: "text-cyan-400", 
+      good: "text-cyan-400",
       fair: "text-yellow-400",
       limited: "text-orange-400"
     };
@@ -132,7 +132,7 @@ export default function AIEnhancedDealCard({
             )}
           </div>
         </div>
-        
+
         <div className="flex items-center justify-between">
           <div className={`glass-panel-secondary px-2 py-1 ${getScoreColor(product.dxmScore)}`}>
             <span className="text-[10px] font-mono uppercase tracking-wider">
@@ -165,7 +165,7 @@ export default function AIEnhancedDealCard({
             </span>
           )}
         </div>
-        
+
         {/* AI Confidence Badge */}
         {aiSummary && (
           <div className="flex items-center gap-2">
@@ -307,7 +307,7 @@ export default function AIEnhancedDealCard({
             </div>
           )}
         </div>
-        
+
         {/* Enhanced DXM Score */}
         <div className={`glass-panel-secondary px-3 py-2 ${getScoreColor(product.dxmScore)} animate-hologram-flicker`}>
           <div className="text-center">

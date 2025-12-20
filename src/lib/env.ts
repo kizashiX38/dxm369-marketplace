@@ -20,50 +20,62 @@ function formatZodErrors(err: z.ZodError): string {
  * Anything secret or sensitive goes here.
  */
 const serverEnvSchema = z.object({
-  NODE_ENV: z
-    .enum(["development", "test", "production"])
-    .default("development"),
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  DXM_APP_ENV: z.enum(["dev", "staging", "prod"]).default("dev"),
 
+  // Amazon Product Advertising API
   AMAZON_ACCESS_KEY_ID: z.string().optional(),
   AMAZON_SECRET_ACCESS_KEY: z.string().optional(),
   AMAZON_ASSOCIATE_TAG: z.string().optional(),
-
   AMAZON_REGION: z.string().default("us-east-1"),
   AMAZON_HOST: z.string().default("webservices.amazon.com"),
+  AMAZON_TRACKING_IDS: z.string().optional(),
+  AMAZON_DEBUG_SIGNATURE: z.string().optional(),
 
   // Local ASIN scraping service (fallback when API not available)
   ASIN_SCRAPER_URL: z.string().default("http://localhost:5000"),
   ASIN_SCRAPER_ENABLED: z.string().default("true"),
+  BRIDGE_SERVER_URL: z.string().default("http://localhost:5000"),
 
+  // Database (PostgreSQL)
   DATABASE_URL: z.string().optional(),
+  DATABASE_POSTGRES_PRISMA_URL: z.string().optional(),
+  DATABASE_POSTGRES_URL: z.string().optional(),
+  DATABASE_POSTGRES_URL_NON_POOLING: z.string().optional(),
+  DATABASE_POOL_MIN: z.string().default("2"),
+  DATABASE_POOL_MAX: z.string().default("10"),
 
-  SENDGRID_API_KEY: z.string().optional(),
-
+  // Admin & Security
   APP_SECRET: z.string().optional(),
   JWT_SECRET: z.string().optional(),
   RATE_LIMIT_SECRET: z.string().optional(),
-
-  // Admin & Security
   ADMIN_SECRET: z.string().optional(),
   CRON_SECRET: z.string().optional(),
+  ENCRYPTION_KEY: z.string().optional(),
 
-  // Database pool
-  DATABASE_POOL_MIN: z.string().optional(),
-  DATABASE_POOL_MAX: z.string().optional(),
-
-  // Email
-  FROM_EMAIL: z.string().optional().default("noreply@dxm369.com"),
+  // Email (SendGrid)
+  SENDGRID_API_KEY: z.string().optional(),
+  FROM_EMAIL: z.string().default("noreply@dxm369.com"),
 
   // Observability
   SENTRY_DSN: z.string().url().optional(),
+  CF_ZONE_ID: z.string().optional(),
+  CF_API_TOKEN: z.string().optional(),
 
-  // Earnings sync
+  // Earnings Sync (Session-based)
   AMAZON_SESSION_COOKIES: z.string().optional(),
   AMAZON_SESSION_ID: z.string().optional(),
   AMAZON_UBID_MAIN: z.string().optional(),
-  
-  // Tracking IDs (comma-separated list)
-  AMAZON_TRACKING_IDS: z.string().optional(),
+
+  // Kaggle Sourcing
+  KAGGLE_API_TOKEN: z.string().optional(),
+  KAGGLE_USERNAME: z.string().optional(),
+  KAGGLE_KEY: z.string().optional(),
+
+  // Deployment metadata
+  VERCEL: z.string().optional(),
+  VERCEL_URL: z.string().optional(),
+  VERCEL_ENV: z.string().optional(),
 });
 
 /**
@@ -71,99 +83,82 @@ const serverEnvSchema = z.object({
  * These are safe to expose to the browser.
  */
 const clientEnvSchema = z.object({
-  NEXT_PUBLIC_ENV: z
-    .string()
-    .optional()
-    .default("development"),
-
-  NEXT_PUBLIC_SITE_URL: z
-    .string()
-    .min(1, "NEXT_PUBLIC_SITE_URL is required")
-    .url("NEXT_PUBLIC_SITE_URL must be a valid URL")
-    .default(process.env.NODE_ENV === "production" ? "" : "http://localhost:3000"),
-
-  NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG: z
-    .string()
-    .min(1, "NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG is required")
-    .default("dxm369-20"),
-
-  NEXT_PUBLIC_BASE_URL: z.string().url().optional(),
+  NEXT_PUBLIC_ENV: z.string().default("development"),
+  NEXT_PUBLIC_SITE_URL: z.string().optional(),
+  NEXT_PUBLIC_BASE_URL: z.string().optional(),
+  NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG: z.string().default("dxm369-20"),
+  NEXT_PUBLIC_TRACKING_BASE_TAG: z.string().default("dxm369"),
   NEXT_PUBLIC_ADMIN_KEY: z.string().optional(),
-  NEXT_PUBLIC_TRACKING_BASE_TAG: z.string().optional(),
+  NEXT_PUBLIC_TELEMETRY_URL: z.string().optional(),
 });
 
 // Raw read from process.env
 const rawServerEnv = {
   NODE_ENV: process.env.NODE_ENV,
+  DXM_APP_ENV: process.env.DXM_APP_ENV,
 
   AMAZON_ACCESS_KEY_ID: process.env.AMAZON_ACCESS_KEY_ID?.trim(),
   AMAZON_SECRET_ACCESS_KEY: process.env.AMAZON_SECRET_ACCESS_KEY?.trim(),
   AMAZON_ASSOCIATE_TAG: process.env.AMAZON_ASSOCIATE_TAG?.trim(),
-
   AMAZON_REGION: process.env.AMAZON_REGION,
   AMAZON_HOST: process.env.AMAZON_HOST,
+  AMAZON_TRACKING_IDS: process.env.AMAZON_TRACKING_IDS,
+  AMAZON_DEBUG_SIGNATURE: process.env.AMAZON_DEBUG_SIGNATURE,
 
   ASIN_SCRAPER_URL: process.env.ASIN_SCRAPER_URL,
   ASIN_SCRAPER_ENABLED: process.env.ASIN_SCRAPER_ENABLED,
+  BRIDGE_SERVER_URL: process.env.BRIDGE_SERVER_URL,
 
-  // DATABASE_URL: Support both direct DATABASE_URL and Vercel-provided DATABASE_POSTGRES_*_URL variants
-  // For serverless (Vercel): prioritize PRISMA_URL (pooler with pgbouncer) for better connection handling
-  // For local/direct connections: use NON_POOLING
-  // Strip trailing newlines that Vercel CLI sometimes adds
   DATABASE_URL: (() => {
     const isServerless = process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_VERSION;
-
-    // Serverless (Vercel): use pooler URL for better concurrency handling
     if (isServerless) {
       const url = (process.env.DATABASE_POSTGRES_PRISMA_URL || process.env.DATABASE_POSTGRES_URL || process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_URL_NON_POOLING)?.trim();
-      if (!url) return undefined;
-      // Keep pgbouncer parameter for pooler URLs - it's needed for connection pooling
       return url;
     }
-
-    // Local/direct: use non-pooling URL if available, fall back to others
     const url = (process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_URL_NON_POOLING || process.env.DATABASE_POSTGRES_URL || process.env.DATABASE_POSTGRES_PRISMA_URL)?.trim();
-    if (!url) return undefined;
-    // Remove pgbouncer parameter from direct connections (not needed and can cause issues)
-    return url.replace('&pgbouncer=true', '').replace('?pgbouncer=true', '');
+    return url?.replace('&pgbouncer=true', '').replace('?pgbouncer=true', '');
   })(),
-
-  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+  DATABASE_POSTGRES_PRISMA_URL: process.env.DATABASE_POSTGRES_PRISMA_URL,
+  DATABASE_POSTGRES_URL: process.env.DATABASE_POSTGRES_URL,
+  DATABASE_POSTGRES_URL_NON_POOLING: process.env.DATABASE_POSTGRES_URL_NON_POOLING,
+  DATABASE_POOL_MIN: process.env.DATABASE_POOL_MIN,
+  DATABASE_POOL_MAX: process.env.DATABASE_POOL_MAX,
 
   APP_SECRET: process.env.APP_SECRET?.trim(),
   JWT_SECRET: process.env.JWT_SECRET?.trim(),
   RATE_LIMIT_SECRET: process.env.RATE_LIMIT_SECRET?.trim(),
+  ADMIN_SECRET: process.env.ADMIN_SECRET?.trim(),
+  CRON_SECRET: process.env.CRON_SECRET?.trim(),
+  ENCRYPTION_KEY: process.env.ENCRYPTION_KEY?.trim(),
 
-  ADMIN_SECRET: process.env.ADMIN_SECRET,
-  CRON_SECRET: process.env.CRON_SECRET,
-
-  DATABASE_POOL_MIN: process.env.DATABASE_POOL_MIN,
-  DATABASE_POOL_MAX: process.env.DATABASE_POOL_MAX,
-
+  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
   FROM_EMAIL: process.env.FROM_EMAIL,
 
   SENTRY_DSN: process.env.SENTRY_DSN,
+  CF_ZONE_ID: process.env.CF_ZONE_ID,
+  CF_API_TOKEN: process.env.CF_API_TOKEN,
 
   AMAZON_SESSION_COOKIES: process.env.AMAZON_SESSION_COOKIES,
   AMAZON_SESSION_ID: process.env.AMAZON_SESSION_ID,
   AMAZON_UBID_MAIN: process.env.AMAZON_UBID_MAIN,
-  
-  AMAZON_TRACKING_IDS: process.env.AMAZON_TRACKING_IDS,
+
+  KAGGLE_API_TOKEN: process.env.KAGGLE_API_TOKEN,
+  KAGGLE_USERNAME: process.env.KAGGLE_USERNAME,
+  KAGGLE_KEY: process.env.KAGGLE_KEY,
+
+  VERCEL: process.env.VERCEL,
+  VERCEL_URL: process.env.VERCEL_URL,
+  VERCEL_ENV: process.env.VERCEL_ENV,
 };
 
 const rawClientEnv = {
   NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
-  // Smart fallback for NEXT_PUBLIC_SITE_URL:
-  // 1. Use explicit NEXT_PUBLIC_SITE_URL if set
-  // 2. Vercel preview: use VERCEL_URL (auto-injected by Vercel)
-  // 3. Local dev: use localhost:3000
-  // 4. Production without explicit URL: undefined (will trigger validation error)
-  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
-  NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG: process.env.NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG,
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
-  NEXT_PUBLIC_ADMIN_KEY: process.env.NEXT_PUBLIC_ADMIN_KEY,
+  NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG: process.env.NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG,
   NEXT_PUBLIC_TRACKING_BASE_TAG: process.env.NEXT_PUBLIC_TRACKING_BASE_TAG,
+  NEXT_PUBLIC_ADMIN_KEY: process.env.NEXT_PUBLIC_ADMIN_KEY,
+  NEXT_PUBLIC_TELEMETRY_URL: process.env.NEXT_PUBLIC_TELEMETRY_URL,
 };
 
 // Parse & validate
@@ -297,8 +292,10 @@ export const securityConfig = {
 export const appConfig = {
   environment: serverEnv.NODE_ENV,
   publicEnv: clientEnv.NEXT_PUBLIC_ENV,
-  siteUrl: clientEnv.NEXT_PUBLIC_SITE_URL,
-  baseUrl: clientEnv.NEXT_PUBLIC_BASE_URL || clientEnv.NEXT_PUBLIC_SITE_URL,
+  // 1. Force absolute URLs for fetch() - required for static generation
+  // 2. Order: Explicit env var > Vercel auto-injected URL > localhost (fallback)
+  siteUrl: clientEnv.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  baseUrl: clientEnv.NEXT_PUBLIC_BASE_URL || clientEnv.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   isProduction: serverEnv.NODE_ENV === "production",
   isDevelopment: serverEnv.NODE_ENV === "development",
   isStaging: clientEnv.NEXT_PUBLIC_ENV === "staging",

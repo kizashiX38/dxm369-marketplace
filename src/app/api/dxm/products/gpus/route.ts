@@ -5,72 +5,90 @@ import { queryAll } from "@/lib/db";
 import { normalizeDealRadarItemToDXMProduct } from "@/lib/products/normalizeDXMProduct";
 import type { DealRadarItem } from "@/lib/dealRadarTypes";
 import { env } from "@/lib/env";
+import { getCategoryFallback } from "@/lib/categoryFallback";
 
 export const revalidate = 900;
 
 export const GET = apiSafe(async (request: NextRequest) => {
-  if (!env.DATABASE_URL) {
+  try {
+    if (!env.DATABASE_URL) {
+      console.warn("[GPU-API] DATABASE_URL not configured, using fallback data");
+      return NextResponse.json(
+        { ok: true, data: getCategoryFallback("GPU") },
+        {
+          status: 200,
+          headers: {
+            "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
+          },
+        }
+      );
+    }
+
+    // Query products with offers and scores
+    const raw = await queryAll<{
+      id: number;
+      asin: string;
+      title: string;
+      brand: string;
+      category: string;
+      image_url?: string;
+      current_price?: number;
+      list_price?: number;
+      prime_eligible?: boolean;
+      dxm_value_score?: number;
+    }>(
+      `SELECT * FROM product_catalog WHERE category = $1`,
+      ["GPU"]
+    );
+
+    // Map database rows to DealRadarItem format
+    const dealRadarItems: DealRadarItem[] = raw.map(row => ({
+      id: `amazon-${row.asin}`,
+      asin: row.asin,
+      title: row.title,
+      brand: row.brand,
+      category: row.category.toLowerCase() as any,
+      price: row.current_price || 0,
+      previousPrice: row.list_price,
+      dxmScore: row.dxm_value_score || 0,
+      imageUrl: row.image_url,
+      availability: row.current_price ? "In Stock" : "Out of Stock",
+      primeEligible: row.prime_eligible || false,
+      vendor: "Amazon"
+    }));
+
+    // Normalize and filter
+    const normalized = dealRadarItems
+      .map(item => {
+        const normalized = normalizeDealRadarItemToDXMProduct(item);
+        if (!normalized) {
+          console.warn("[DXM-NORMALIZER] Dropped invalid product:", item?.id, item?.asin);
+        }
+        return normalized;
+      })
+      .filter(Boolean);
+
+    // Use fallback if no data
+    const finalData = normalized.length > 0 ? normalized : getCategoryFallback("GPU");
+
     return NextResponse.json(
-      { ok: false, data: [], error: "DATABASE_URL not configured" },
+      { ok: true, data: finalData },
+      {
+        headers: {
+          "Cache-Control": "s-maxage=900, stale-while-revalidate=3600",
+        },
+      }
+    );
+  } catch (error) {
+    console.error("[GPU-API] Error:", error);
+    return NextResponse.json(
+      { ok: true, data: getCategoryFallback("GPU") },
       {
         status: 200,
         headers: {
-          "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
+          "Cache-Control": "s-maxage=60, stale-while-revalidate=300",
         },
       }
     );
   }
-
-  // Query products from product_catalog table (same as CPU route)
-  const raw = await queryAll<{
-    id: number;
-    asin: string;
-    title: string;
-    brand: string;
-    category: string;
-    image_url?: string;
-    current_price?: number;
-    list_price?: number;
-    prime_eligible?: boolean;
-    dxm_value_score?: number;
-  }>(
-    `SELECT * FROM product_catalog WHERE category = $1`,
-    ["GPU"]
-  );
-
-  // Map database rows to DealRadarItem format
-  const dealRadarItems: DealRadarItem[] = raw.map(row => ({
-    id: `amazon-${row.asin}`,
-    asin: row.asin,
-    title: row.title,
-    brand: row.brand,
-    category: row.category.toLowerCase() as any,
-    price: row.current_price || 0,
-    previousPrice: row.list_price,
-    dxmScore: row.dxm_value_score || 0,
-    imageUrl: row.image_url,
-    availability: row.current_price ? "In Stock" : "Out of Stock",
-    primeEligible: row.prime_eligible || false,
-    vendor: "Amazon"
-  }));
-
-  // Normalize and filter
-  const normalized = dealRadarItems
-    .map(item => {
-      const normalized = normalizeDealRadarItemToDXMProduct(item);
-      if (!normalized) {
-        console.warn("[DXM-NORMALIZER] Dropped invalid product:", item?.id, item?.asin);
-      }
-      return normalized;
-    })
-    .filter(Boolean);
-
-  return NextResponse.json(
-    { ok: true, data: normalized },
-    {
-      headers: {
-        "Cache-Control": "s-maxage=900, stale-while-revalidate=3600",
-      },
-    }
-  );
 });

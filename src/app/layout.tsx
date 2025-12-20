@@ -57,18 +57,18 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="min-h-screen flex flex-col bg-[#080c12] text-slate-200 relative">
+      <body className="min-h-screen flex flex-col bg-[#080c12] text-slate-200 relative" suppressHydrationWarning>
         {/* Enhanced ambient background layers */}
         <div className="pointer-events-none fixed inset-0 -z-20 bg-gradient-to-br from-[#080c12] via-[#0a0f18] to-[#0c1220]" />
-        
+
         {/* Holographic ambient lighting */}
-        <div 
+        <div
           className="pointer-events-none fixed inset-0 -z-19 opacity-[0.08]"
           style={{
             background: "radial-gradient(ellipse at 20% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 70%, rgba(34, 211, 238, 0.1) 0%, transparent 50%)"
           }}
         />
-        
+
         {/* Enhanced grid overlay with depth */}
         <div
           className="pointer-events-none fixed inset-0 -z-18 opacity-[0.06]"
@@ -78,7 +78,7 @@ export default function RootLayout({
             backgroundSize: "50px 50px",
           }}
         />
-        
+
         {/* Glass scanlines with enhanced opacity */}
         <div
           className="pointer-events-none fixed inset-0 -z-17 opacity-[0.02] scanline-overlay"
@@ -88,9 +88,9 @@ export default function RootLayout({
             mixBlendMode: "screen",
           }}
         />
-        
+
         {/* Subtle film grain overlay */}
-        <div 
+        <div
           className="pointer-events-none fixed inset-0 -z-16 opacity-[0.008]"
           style={{
             backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOSIgbnVtT2N0YXZlcz0iNCIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjMiLz48L3N2Zz4=')",

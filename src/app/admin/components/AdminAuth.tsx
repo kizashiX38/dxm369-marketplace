@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface AdminAuthProps {
   onAuthenticated: (key: string) => void;
@@ -15,16 +15,7 @@ export default function AdminAuth({ onAuthenticated }: AdminAuthProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Check if key is stored in sessionStorage
-    const storedKey = sessionStorage.getItem("admin_key");
-    if (storedKey) {
-      // Verify the key works
-      verifyKey(storedKey);
-    }
-  }, []);
-
-  const verifyKey = async (keyToVerify: string) => {
+  const verifyKey = useCallback(async (keyToVerify: string) => {
     setLoading(true);
     setError("");
     try {
@@ -47,7 +38,16 @@ export default function AdminAuth({ onAuthenticated }: AdminAuthProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [onAuthenticated]);
+
+  useEffect(() => {
+    // Check if key is stored in sessionStorage
+    const storedKey = sessionStorage.getItem("admin_key");
+    if (storedKey) {
+      // Verify the key works
+      verifyKey(storedKey);
+    }
+  }, [verifyKey]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

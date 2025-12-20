@@ -1,0 +1,209 @@
+{
+  "timestamp": "2025-12-19T11:33:59.761Z",
+  "blocks": [
+    {
+      "id": "block-a",
+      "name": "Emergency Triage",
+      "status": "completed",
+      "progress": 100,
+      "startTime": "2025-12-19T11:32:29.015Z",
+      "endTime": "2025-12-19T11:33:00.562Z",
+      "tasks": [
+        {
+          "id": "a1",
+          "name": "Build Status Check",
+          "status": "completed"
+        },
+        {
+          "id": "a2",
+          "name": "Database Connectivity Test",
+          "status": "completed"
+        },
+        {
+          "id": "a3",
+          "name": "Environment Variables Audit",
+          "status": "completed"
+        },
+        {
+          "id": "a4",
+          "name": "API Endpoints Test",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "block-b",
+      "name": "Build Stabilization",
+      "status": "completed",
+      "progress": 100,
+      "startTime": "2025-12-19T11:33:00.563Z",
+      "endTime": "2025-12-19T11:33:33.378Z",
+      "tasks": [
+        {
+          "id": "b1",
+          "name": "TypeScript Error Analysis",
+          "status": "completed"
+        },
+        {
+          "id": "b2",
+          "name": "Fix calculateRealDXMScoreV2 Export",
+          "status": "completed"
+        },
+        {
+          "id": "b3",
+          "name": "Fix Union Type Error",
+          "status": "completed"
+        },
+        {
+          "id": "b4",
+          "name": "Build Verification",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "block-c",
+      "name": "Environment Configuration",
+      "status": "completed",
+      "progress": 100,
+      "startTime": "2025-12-19T11:33:33.378Z",
+      "endTime": "2025-12-19T11:33:34.112Z",
+      "tasks": [
+        {
+          "id": "c1",
+          "name": "Copy Environment Template",
+          "status": "completed"
+        },
+        {
+          "id": "c2",
+          "name": "Generate Secrets",
+          "status": "completed"
+        },
+        {
+          "id": "c3",
+          "name": "Validate Environment",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "block-d",
+      "name": "Database Setup",
+      "status": "failed",
+      "progress": 0,
+      "startTime": "2025-12-19T11:33:59.651Z",
+      "endTime": "2025-12-19T11:33:59.758Z",
+      "tasks": [
+        {
+          "id": "d1",
+          "name": "Database Connection Test",
+          "status": "failed"
+        },
+        {
+          "id": "d2",
+          "name": "Schema Migration",
+          "status": "failed"
+        },
+        {
+          "id": "d3",
+          "name": "Seed Data Load",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "id": "block-e",
+      "name": "Static Generation Fix",
+      "status": "completed",
+      "progress": 100,
+      "startTime": "2025-12-19T11:33:34.114Z",
+      "endTime": "2025-12-19T11:33:59.651Z",
+      "tasks": [
+        {
+          "id": "e1",
+          "name": "Find Relative URLs",
+          "status": "completed"
+        },
+        {
+          "id": "e2",
+          "name": "Fix Category Pages",
+          "status": "completed"
+        },
+        {
+          "id": "e3",
+          "name": "Static Generation Test",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "block-f",
+      "name": "Dead Links Fix",
+      "status": "pending",
+      "progress": 0,
+      "tasks": [
+        {
+          "id": "f1",
+          "name": "Test All Category APIs",
+          "status": "pending"
+        },
+        {
+          "id": "f2",
+          "name": "Database Product Count",
+          "status": "pending"
+        },
+        {
+          "id": "f3",
+          "name": "Test Category Pages",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "block-g",
+      "name": "Data Pipeline Integration",
+      "status": "pending",
+      "progress": 0,
+      "tasks": [
+        {
+          "id": "g1",
+          "name": "Test Amazon API Credentials",
+          "status": "pending"
+        },
+        {
+          "id": "g2",
+          "name": "Product Service Test",
+          "status": "pending"
+        },
+        {
+          "id": "g3",
+          "name": "End-to-End Pipeline Test",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "block-h",
+      "name": "Testing & Validation",
+      "status": "pending",
+      "progress": 0,
+      "tasks": [
+        {
+          "id": "h1",
+          "name": "Full Build Test",
+          "status": "pending"
+        },
+        {
+          "id": "h2",
+          "name": "All Pages Load Test",
+          "status": "pending"
+        },
+        {
+          "id": "h3",
+          "name": "Affiliate Links Test",
+          "status": "pending"
+        }
+      ]
+    }
+  ]
+}

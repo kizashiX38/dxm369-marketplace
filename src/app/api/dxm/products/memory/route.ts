@@ -1,4 +1,4 @@
-// src/app/api/dxm/products/laptops/route.ts
+// src/app/api/dxm/products/memory/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { apiSafe } from "@/lib/apiSafe";
 import { queryAll } from "@/lib/db";
@@ -10,19 +10,17 @@ import { getCategoryFallback } from "@/lib/categoryFallback";
 export const revalidate = 900;
 
 export const GET = apiSafe(async (request: NextRequest) => {
-  try {
-    if (!env.DATABASE_URL) {
-      console.warn("[LAPTOP-API] DATABASE_URL not configured, using fallback data");
-      return NextResponse.json(
-        { ok: true, data: getCategoryFallback("LAPTOP") },
-        {
-          status: 200,
-          headers: {
-            "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
-          },
-        }
-      );
-    }
+  if (!env.DATABASE_URL) {
+    return NextResponse.json(
+      { ok: true, data: getCategoryFallback("MEMORY") },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    );
+  }
 
   // Query products with offers and scores
   const raw = await queryAll<{
@@ -38,7 +36,7 @@ export const GET = apiSafe(async (request: NextRequest) => {
     dxm_value_score?: number;
   }>(
     `SELECT * FROM product_catalog WHERE category = $1`,
-    ["Laptop"]
+    ["Memory"]
   );
 
   // Map database rows to DealRadarItem format
@@ -68,27 +66,12 @@ export const GET = apiSafe(async (request: NextRequest) => {
     })
     .filter(Boolean);
 
-  // Use fallback if no data
-  const finalData = normalized.length > 0 ? normalized : getCategoryFallback("LAPTOP");
-
   return NextResponse.json(
-    { ok: true, data: finalData },
+    { ok: true, data: normalized },
     {
       headers: {
         "Cache-Control": "s-maxage=900, stale-while-revalidate=3600",
       },
     }
   );
-  } catch (error) {
-    console.error("[LAPTOP-API] Error:", error);
-    return NextResponse.json(
-      { ok: true, data: getCategoryFallback("LAPTOP") },
-      {
-        status: 200,
-        headers: {
-          "Cache-Control": "s-maxage=60, stale-while-revalidate=300",
-        },
-      }
-    );
-  }
 });

@@ -248,7 +248,16 @@ export async function refreshProduct(id: number): Promise<MarketplaceProduct> {
  * If title is provided, allows direct import without Amazon API validation (for bulk seeding)
  */
 export async function bulkImportProducts(
-  products: Array<{ asin: string; category: string; title?: string }>
+  products: Array<{
+    asin: string;
+    category: string;
+    title?: string;
+    price?: number;
+    image_url?: string;
+    rating?: number;
+    review_count?: number;
+    data_raw?: any;
+  }>
 ): Promise<{ success: number; failed: number; errors: string[] }> {
   let success = 0;
   let failed = 0;
@@ -267,7 +276,11 @@ export async function bulkImportProducts(
           asin: item.asin,
           category: item.category,
           title: item.title,
-          price: 99.99, // Placeholder for POC
+          price: item.price,
+          image_url: item.image_url,
+          rating: item.rating,
+          review_count: item.review_count,
+          data_raw: item.data_raw
         });
 
         await logSync(item.asin, "import", "success", "Direct import (seeding)");

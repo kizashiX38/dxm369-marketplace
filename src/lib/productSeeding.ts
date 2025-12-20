@@ -5,6 +5,7 @@
 import { DealRadarItem } from "./dealRadar";
 import { amazonAdapter } from "./amazonAdapter";
 import { calculateDXMScoreV2 } from "./dxmScoring";
+import { saveProductToDB } from "./services/adminProducts";
 
 export interface ProductSeed {
   asin: string;
@@ -155,7 +156,7 @@ export class ProductSeedingEngine {
   private results: SeedingResult[] = [];
   private stats: Partial<SeedingStats> = {};
 
-  constructor(private batchSize: number = 10, private delayMs: number = 1000) {}
+  constructor(private batchSize: number = 10, private delayMs: number = 1000) { }
 
   /**
    * Seed products from the comprehensive database
@@ -169,18 +170,18 @@ export class ProductSeedingEngine {
     } = {}
   ): Promise<SeedingStats> {
     const startTime = Date.now();
-    
+
     // Filter seeds based on options
     let seeds = PRODUCT_SEED_DATABASE;
-    
+
     if (options.categories?.length) {
       seeds = seeds.filter(seed => options.categories!.includes(seed.category));
     }
-    
+
     if (options.priority) {
       seeds = seeds.filter(seed => seed.priority === options.priority);
     }
-    
+
     if (options.maxProducts) {
       seeds = seeds.slice(0, options.maxProducts);
     }
@@ -190,11 +191,11 @@ export class ProductSeedingEngine {
     // Process in batches
     this.processingQueue = [...seeds];
     this.results = [];
-    
+
     while (this.processingQueue.length > 0) {
       const batch = this.processingQueue.splice(0, this.batchSize);
       await this.processBatch(batch);
-      
+
       // Rate limiting
       if (this.processingQueue.length > 0) {
         await this.delay(this.delayMs);
@@ -204,9 +205,9 @@ export class ProductSeedingEngine {
     // Calculate final stats
     const endTime = Date.now();
     this.stats = this.calculateStats(this.results, endTime - startTime);
-    
+
     console.log(`✅ DXM Product Seeding Complete:`, this.stats);
-    
+
     return this.stats as SeedingStats;
   }
 
@@ -216,7 +217,7 @@ export class ProductSeedingEngine {
   private async processBatch(batch: ProductSeed[]): Promise<void> {
     const batchPromises = batch.map(seed => this.processSingleSeed(seed));
     const batchResults = await Promise.allSettled(batchPromises);
-    
+
     batchResults.forEach((result, index) => {
       if (result.status === 'fulfilled') {
         this.results.push(result.value);
@@ -231,7 +232,7 @@ export class ProductSeedingEngine {
         });
       }
     });
-    
+
     console.log(`📦 Processed batch: ${batch.length} products, ${this.results.length} total`);
   }
 
@@ -240,11 +241,11 @@ export class ProductSeedingEngine {
    */
   private async processSingleSeed(seed: ProductSeed): Promise<SeedingResult> {
     const startTime = Date.now();
-    
+
     try {
       // Fetch product from Amazon API
       const product = await amazonAdapter.getProduct(seed.asin);
-      
+
       if (!product) {
         return {
           success: false,
@@ -279,11 +280,22 @@ export class ProductSeedingEngine {
         memory: product.specs.Memory || product.specs.Capacity,
         imageUrl: product.imageUrl,
         tags: seed.tags,
-        availability: product.availability === 'in_stock' ? 'In Stock' : 
-                     product.availability === 'limited' ? 'Limited Stock' : 'Out of Stock',
+        availability: product.availability === 'in_stock' ? 'In Stock' :
+          product.availability === 'limited' ? 'Limited Stock' : 'Out of Stock',
         primeEligible: product.isPrime,
         vendor: product.vendor
       };
+
+      // Save to database (marketplace_products table)
+      await saveProductToDB({
+        asin: enhancedProduct.asin,
+        category: enhancedProduct.category,
+        title: enhancedProduct.title,
+        image_url: enhancedProduct.imageUrl || undefined,
+        price: enhancedProduct.price,
+        rating: enhancedProduct.dxmScore,
+        data_raw: enhancedProduct
+      });
 
       return {
         success: true,
@@ -329,13 +341,13 @@ export class ProductSeedingEngine {
   private extractBrand(productName: string): string {
     const brands = ['NVIDIA', 'AMD', 'Intel', 'ASUS', 'MSI', 'EVGA', 'Corsair', 'Samsung', 'Apple', 'Dell', 'HP', 'Lenovo'];
     const name = productName.toUpperCase();
-    
+
     for (const brand of brands) {
       if (name.includes(brand.toUpperCase())) {
         return brand;
       }
     }
-    
+
     return 'Unknown';
   }
 
@@ -345,15 +357,15 @@ export class ProductSeedingEngine {
   private calculateStats(results: SeedingResult[], totalTime: number): SeedingStats {
     const successful = results.filter(r => r.success);
     const failed = results.filter(r => !r.success);
-    
+
     const categoryBreakdown: Record<string, number> = {};
     successful.forEach(result => {
       categoryBreakdown[result.category] = (categoryBreakdown[result.category] || 0) + 1;
     });
 
-    const avgScore = successful.length > 0 ? 
+    const avgScore = successful.length > 0 ?
       successful.reduce((sum, r) => sum + (r.dxmScore || 0), 0) / successful.length : 0;
-    
+
     const avgPrice = successful.length > 0 ?
       successful.reduce((sum, r) => sum + (r.price || 0), 0) / successful.length : 0;
 

@@ -17,11 +17,11 @@ export default async function Home() {
 
   try {
     const baseUrl = appConfig.baseUrl;
-    
+
     // Fetch from normalized API routes with ISR caching
     const [gpusRes, buildsRes] = await Promise.all([
-      fetch(`${baseUrl}/api/dxm/products/gpus`, { next: { revalidate: 3600 }, headers: { 'Content-Type': 'application/json' } }).catch(() => null),
-      fetch(`${baseUrl}/api/dxm/products/builds`, { next: { revalidate: 3600 }, headers: { 'Content-Type': 'application/json' } }).catch(() => null),
+      fetch(`${baseUrl}/api/dxm/products/gpus`, { cache: 'no-store', next: { revalidate: 3600 }, headers: { 'Content-Type': 'application/json' } }).catch(() => null),
+      fetch(`${baseUrl}/api/dxm/products/builds`, { cache: 'no-store', next: { revalidate: 3600 }, headers: { 'Content-Type': 'application/json' } }).catch(() => null),
     ]);
 
     if (gpusRes?.ok) {
@@ -53,7 +53,7 @@ export default async function Home() {
           DXM
         </div>
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,transparent_0%,rgba(6,182,212,0.05)_50%,transparent_100%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-scan-fast" />
-        
+
         {/* Diagonal light streak */}
         <div className="pointer-events-none absolute top-0 left-0 w-full h-full opacity-20">
           <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-cyan-400/40 via-transparent to-transparent transform -skew-x-12" />
@@ -92,7 +92,7 @@ export default async function Home() {
                 </span>
               </p>
             </div>
-            
+
             {/* Version Tag */}
             <div className="flex flex-col items-end gap-1">
               <span className="text-[9px] font-mono uppercase text-cyan-600/70">
@@ -174,8 +174,8 @@ export default async function Home() {
               DXM Featured: Top 1440p Deals
             </h2>
           </div>
-          <Link 
-            href="/deals" 
+          <Link
+            href="/deals"
             className="text-xs text-cyan-400 hover:text-cyan-300 font-mono uppercase tracking-wider transition-colors"
           >
             View All →
@@ -197,8 +197,8 @@ export default async function Home() {
               Best Value Under $400
             </h2>
           </div>
-          <Link 
-            href="/deals?maxPrice=400" 
+          <Link
+            href="/deals?maxPrice=400"
             className="text-xs text-cyan-400 hover:text-cyan-300 font-mono uppercase tracking-wider transition-colors"
           >
             View All →
@@ -220,8 +220,8 @@ export default async function Home() {
               4K Gaming Powerhouse
             </h2>
           </div>
-          <Link 
-            href="/gpus?segment=4k" 
+          <Link
+            href="/gpus?segment=4k"
             className="text-xs text-cyan-400 hover:text-cyan-300 font-mono uppercase tracking-wider transition-colors"
           >
             View All →
@@ -243,8 +243,8 @@ export default async function Home() {
               Trending Price Drops
             </h2>
           </div>
-          <Link 
-            href="/trending" 
+          <Link
+            href="/trending"
             className="text-xs text-cyan-400 hover:text-cyan-300 font-mono uppercase tracking-wider transition-colors"
           >
             View All →
@@ -278,28 +278,28 @@ export default async function Home() {
 
 /* Cyber UI Components */
 
-function CyberCard({ 
-  title, 
-  children, 
-  iconColor 
-}: { 
-  title: string; 
-  children: React.ReactNode; 
-  iconColor: string 
+function CyberCard({
+  title,
+  children,
+  iconColor
+}: {
+  title: string;
+  children: React.ReactNode;
+  iconColor: string
 }) {
   return (
     <div className="relative glass-panel p-6 clip-corner-tl overflow-hidden group transition-all duration-300 hover:border-cyan-400/50 hover:shadow-[0_0_20px_-8px_rgba(6,182,212,0.3)] hover:scale-[1.015] holographic-sheen glass-corner-accent">
       <div className="absolute top-0 right-0 p-2 opacity-15 group-hover:opacity-30 transition-opacity">
         <IconHexGrid />
       </div>
-      
+
       <div className="flex items-center gap-3 mb-5 pb-3 border-b border-cyan-500/20 group-hover:border-cyan-400/40 transition-colors">
         <div className={`w-1.5 h-1.5 ${iconColor} shadow-[0_0_12px_currentColor] animate-neon-pulse`} />
         <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-slate-300 group-hover:text-white transition-colors">
           {title}
         </h2>
       </div>
-      
+
       <div className="relative z-10">
         {children}
       </div>
@@ -324,11 +324,11 @@ function ModuleTile({
       className="group relative flex items-center gap-3.5 glass-panel-secondary px-4 py-3 transition-all duration-200 hover:border-cyan-400/50 hover:bg-white/8 overflow-hidden holographic-sheen"
     >
       <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-cyan-500/0 group-hover:bg-cyan-400 group-hover:shadow-[0_0_8px_cyan] transition-all duration-200" />
-      
+
       <span className="text-cyan-500/70 group-hover:text-cyan-300 transition-colors group-hover:scale-110 duration-200 animate-hologram-flicker">
         {icon}
       </span>
-      
+
       <div className="space-y-0.5">
         <h3 className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors uppercase tracking-wide">
           {title}
@@ -337,7 +337,7 @@ function ModuleTile({
           {description}
         </p>
       </div>
-      
+
       <IconArrowRight className="absolute right-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-cyan-400" />
     </Link>
   );

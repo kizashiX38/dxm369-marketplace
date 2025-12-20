@@ -5,13 +5,14 @@ import { queryAll } from "@/lib/db";
 import { normalizeDealRadarItemToDXMProduct } from "@/lib/products/normalizeDXMProduct";
 import type { DealRadarItem } from "@/lib/dealRadarTypes";
 import { env } from "@/lib/env";
+import { getCategoryFallback } from "@/lib/categoryFallback";
 
 export const revalidate = 900;
 
 export const GET = apiSafe(async (request: NextRequest) => {
   if (!env.DATABASE_URL) {
     return NextResponse.json(
-      { ok: false, data: [], error: "DATABASE_URL not configured" },
+      { ok: true, data: getCategoryFallback("STORAGE") },
       {
         status: 200,
         headers: {

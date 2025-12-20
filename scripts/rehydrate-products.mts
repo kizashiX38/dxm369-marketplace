@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 // scripts/rehydrate-products.ts
-// Rehydrate broken products using ASIN scraper (no PA-API required)
-// Fetches missing metadata for products with incomplete data
+// Rehydrate broken products using LOCAL STATIC SEED DATA
+// Fallback mechanism when API/Scraper are unavailable
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -9,9 +9,22 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-import { queryAll, query } from "../src/lib/db";
-import { getAmazonProductsByASIN } from "../src/lib/amazonPAAPI";
+import { queryAll } from "../src/lib/db";
 import { saveProductToDB } from "../src/lib/services/adminProducts";
+import fs from "fs";
+import path from "path";
+
+// Load static seed data
+const SEED_DATA_PATH = path.join(process.cwd(), "data", "asin-seed.json");
+let SEED_DATA: any = null;
+
+try {
+  const rawData = fs.readFileSync(SEED_DATA_PATH, "utf-8");
+  SEED_DATA = JSON.parse(rawData);
+} catch (e) {
+  console.error("❌ Failed to load seed data:", e);
+  process.exit(1);
+}
 
 interface BrokenProduct {
   id: number;
@@ -42,47 +55,44 @@ async function findBrokenProducts(category: string = "gpu"): Promise<BrokenProdu
   return broken;
 }
 
+function findInSeedData(asin: string, category: string): any | null {
+  if (!SEED_DATA || !SEED_DATA.products) return null;
+
+  const categoryProducts = SEED_DATA.products[category];
+  if (!Array.isArray(categoryProducts)) return null;
+
+  return categoryProducts.find((p: any) => p.asin === asin);
+}
+
 async function rehydrateProduct(asin: string, category: string): Promise<boolean> {
   try {
-    console.log(`  🔄 Fetching ${asin}...`);
-    
-    // Use Amazon API (will fallback to scraper if API unavailable)
-    const products = await getAmazonProductsByASIN([asin]);
-    
-    if (products.length === 0) {
-      console.log(`  ❌ No data found for ${asin}`);
+    console.log(`  🔄 Checking ${asin}...`);
+
+    // Look up in seed data
+    const seedProduct = findInSeedData(asin, category);
+
+    if (!seedProduct) {
+      console.log(`  ❌ Not found in seed data: ${asin}`);
       return false;
     }
 
-    const product = products[0];
-    
-    // Validate we got real data
-    if (!product.title || product.title === "Unknown Product") {
-      console.log(`  ⚠️  Incomplete data for ${asin} - skipping`);
-      return false;
-    }
-
-    if (!product.price || product.price < 50) {
-      console.log(`  ⚠️  Suspicious price ($${product.price}) for ${asin} - skipping`);
-      return false;
-    }
-
-    // Save to database (upsert - updates if exists)
+    // Save to database (upsert)
     await saveProductToDB({
-      asin: product.asin,
+      asin: seedProduct.asin,
       category: category,
-      title: product.title,
-      image_url: product.imageUrl,
-      price: product.price,
-      rating: product.dxmScore,
-      review_count: product.dxmScore ? Math.floor(product.dxmScore * 100) : undefined,
+      title: seedProduct.title,
+      image_url: seedProduct.imageUrl,
+      price: seedProduct.price,
+      rating: seedProduct.dxmScore,
+      review_count: 100, // Default for seeded items
       data_raw: {
-        ...product,
-        brand: product.brand || "Unknown"
+        ...seedProduct,
+        brand: seedProduct.brand || "Unknown",
+        dataSource: "seed-rehydration"
       }
     });
 
-    console.log(`  ✅ Rehydrated ${asin}: ${product.title.substring(0, 50)}...`);
+    console.log(`  ✅ Rehydrated ${asin}: ${seedProduct.title.substring(0, 50)}...`);
     return true;
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
@@ -93,55 +103,31 @@ async function rehydrateProduct(asin: string, category: string): Promise<boolean
 
 async function main() {
   const category = process.argv[2] || "gpu";
-  const asinArg = process.argv[3]; // Optional: specific ASIN to rehydrate
-  
-  console.log(`\n🚀 DXM369 Product Rehydration Tool`);
+
+  console.log(`\n🚀 DXM369 Product Rehydration Tool (Local Seed Mode)`);
   console.log(`   Category: ${category.toUpperCase()}`);
-  console.log(`   Using: ASIN Scraper Bridge (no PA-API required)\n`);
+  console.log(`   Source: ${SEED_DATA_PATH}\n`);
 
   try {
-    if (asinArg) {
-      // Rehydrate single ASIN
-      console.log(`Rehydrating single ASIN: ${asinArg}\n`);
-      const success = await rehydrateProduct(asinArg, category);
-      process.exit(success ? 0 : 1);
-    }
-
     // Find all broken products
     const broken = await findBrokenProducts(category);
-    
+
     if (broken.length === 0) {
       console.log(`✅ No broken ${category} products found!`);
       return;
     }
 
     console.log(`Found ${broken.length} broken ${category} products\n`);
-    console.log("Starting rehydration...\n");
+    console.log("Starting rehydration from seed data...\n");
 
     let successCount = 0;
     let failCount = 0;
 
-    // Process in batches of 5 to avoid rate limits
-    const batchSize = 5;
-    for (let i = 0; i < broken.length; i += batchSize) {
-      const batch = broken.slice(i, i + batchSize);
-      
-      console.log(`\n📦 Batch ${Math.floor(i / batchSize) + 1} (${batch.length} products):`);
-      
-      const results = await Promise.all(
-        batch.map(p => rehydrateProduct(p.asin, p.category))
-      );
-
-      results.forEach((success, idx) => {
-        if (success) successCount++;
-        else failCount++;
-      });
-
-      // Rate limiting: wait 2 seconds between batches
-      if (i + batchSize < broken.length) {
-        console.log(`   ⏳ Waiting 2s before next batch...`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
+    // Process all products
+    for (const product of broken) {
+      const success = await rehydrateProduct(product.asin, product.category);
+      if (success) successCount++;
+      else failCount++;
     }
 
     console.log(`\n✅ Rehydration complete!`);
